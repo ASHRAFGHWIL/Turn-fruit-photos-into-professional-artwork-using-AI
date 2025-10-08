@@ -502,8 +502,8 @@ const App: React.FC = () => {
     return (
         <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center p-4 sm:p-6 lg:p-8">
             <header className="w-full max-w-7xl text-center mb-8">
-                <h1 className="text-4xl sm:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-600">
-                    استوديو غويل
+                <h1 className="text-4xl sm:text-5xl font-extrabold text-orange-500 text-stroke-white">
+                    استوديو غويل فود
                 </h1>
                 <p className="text-lg text-gray-400 mt-2">
                     حوّل صور منتجاتك إلى أعمال فنية احترافية باستخدام الذكاء الاصطناعي
