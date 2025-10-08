@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon } from './icons';
-import { ImageFilter, AspectRatio, TextureEffect } from '../types';
+import { ImageFilter, AspectRatio, TextureEffect, SubjectType } from '../types';
 
 interface ImageWorkspaceProps {
     originalImage: string | null;
@@ -16,6 +16,7 @@ interface ImageWorkspaceProps {
     activeTexture: TextureEffect;
     previewTexture: TextureEffect | null;
     colorFilterStyle: React.CSSProperties;
+    subjectType: SubjectType;
 }
 
 const getFilterClassName = (filter: ImageFilter): string => {
@@ -57,6 +58,25 @@ const getAspectRatioClassName = (ratio: AspectRatio): string => {
     }
 };
 
+const getUploadButtonText = (subjectType: SubjectType): string => {
+    switch (subjectType) {
+        case SubjectType.Fruit:
+            return 'اختر صورة فاكهة';
+        case SubjectType.Vegetable:
+            return 'اختر صورة خضروات';
+        case SubjectType.Sandwich:
+            return 'اختر صورة ساندويتش';
+        case SubjectType.Juice:
+            return 'اختر صورة عصير';
+        case SubjectType.Pie:
+            return 'اختر صورة فطيرة';
+        case SubjectType.BakedGoods:
+            return 'اختر صورة مخبوزات';
+        default:
+            return 'اختر صورة';
+    }
+};
+
 
 const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     originalImage,
@@ -72,6 +92,7 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     activeTexture,
     previewTexture,
     colorFilterStyle,
+    subjectType,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -123,7 +144,7 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
                                 className="bg-purple-600 text-white px-6 py-3 rounded-lg font-semibold flex items-center gap-2 hover:bg-purple-700 transition-all transform hover:scale-105"
                             >
                                 <UploadIcon />
-                                اختر صورة فاكهة
+                                {getUploadButtonText(subjectType)}
                             </button>
                             <p className="text-xs text-gray-500 mt-2">PNG, JPG, WEBP</p>
                         </>

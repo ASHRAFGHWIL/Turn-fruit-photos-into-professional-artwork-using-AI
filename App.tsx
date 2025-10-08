@@ -775,6 +775,7 @@ const App: React.FC = () => {
                         activeTexture={activeTexture}
                         previewTexture={previewTexture}
                         colorFilterStyle={colorFilterStyle}
+                        subjectType={subjectType}
                     />
                      {generatedImage && !isLoading && !error && (
                          <>
