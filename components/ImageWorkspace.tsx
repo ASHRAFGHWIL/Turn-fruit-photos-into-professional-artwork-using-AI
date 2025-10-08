@@ -1,5 +1,5 @@
 import React, { useCallback, useRef } from 'react';
-import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon } from './icons';
+import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon, ZoomIcon } from './icons';
 import { ImageFilter, AspectRatio, TextureEffect, SubjectType } from '../types';
 
 interface ImageWorkspaceProps {
@@ -17,6 +17,7 @@ interface ImageWorkspaceProps {
     previewTexture: TextureEffect | null;
     colorFilterStyle: React.CSSProperties;
     subjectType: SubjectType;
+    onZoomRequest: (url: string | null) => void;
 }
 
 const getFilterClassName = (filter: ImageFilter): string => {
@@ -93,6 +94,7 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     previewTexture,
     colorFilterStyle,
     subjectType,
+    onZoomRequest,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -159,7 +161,7 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
                 ) : error ? (
                     renderPlaceholder('خطأ', <div className="flex flex-col items-center"><ErrorIcon /><p className="mt-2 text-red-400">{error}</p></div>)
                 ) : generatedImage ? (
-                    <div className={`w-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative ${ratioClass}`}>
+                    <div className={`w-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative group ${ratioClass}`}>
                         <div className={`w-full h-full relative ${textureClass}`}>
                             <img 
                                 src={generatedImage} 
@@ -168,6 +170,23 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
                                 style={colorFilterStyle}
                             />
                         </div>
+                        
+                        {!isEnhancing && (
+                            <div 
+                                className="absolute inset-0 bg-black/50 flex justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 cursor-pointer"
+                                onClick={() => onZoomRequest(generatedImage)}
+                                role="button"
+                                tabIndex={0}
+                                onKeyDown={(e) => e.key === 'Enter' && onZoomRequest(generatedImage)}
+                                aria-label="تكبير الصورة"
+                            >
+                                <div className="flex items-center gap-2 px-4 py-2 bg-white/90 text-gray-900 font-bold rounded-lg pointer-events-none transform group-hover:scale-110 transition-transform duration-300">
+                                    <ZoomIcon />
+                                    تكبير
+                                </div>
+                            </div>
+                        )}
+
                         {isEnhancing && (
                             <div className="absolute inset-0 bg-black/60 flex flex-col justify-center items-center rounded-lg">
                                 <LoadingSpinner />

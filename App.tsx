@@ -7,6 +7,7 @@ import { transformImage, upscaleImage, generateImageFromScratch, generateAltText
 import ImageWorkspace from './components/ImageWorkspace';
 import BackgroundSelector from './components/BackgroundSelector';
 import ColorAdjustmentsPanel from './components/ColorAdjustments';
+import ZoomedImage from './components/ZoomedImage';
 // FIX: Removed KeyIcon and CheckCircleIcon as the API key UI is removed.
 import { DownloadIcon, SwitchImageIcon, UpscaleIcon, SaveIcon, LoadIcon, CopyIcon, SparklesIcon, TranslateIcon } from './components/icons';
 
@@ -69,6 +70,8 @@ const App: React.FC = () => {
     
     const [saveMessage, setSaveMessage] = useState<string>('');
     const [hasSavedSettings, setHasSavedSettings] = useState<boolean>(false);
+    const [zoomedImageUrl, setZoomedImageUrl] = useState<string | null>(null);
+
 
     // FIX: Removed API key related state as it's now handled by environment variables.
     // const [apiKeyInput, setApiKeyInput] = useState<string>('');
@@ -776,6 +779,7 @@ const App: React.FC = () => {
                         previewTexture={previewTexture}
                         colorFilterStyle={colorFilterStyle}
                         subjectType={subjectType}
+                        onZoomRequest={setZoomedImageUrl}
                     />
                      {generatedImage && !isLoading && !error && (
                          <>
@@ -956,6 +960,9 @@ const App: React.FC = () => {
                     )}
                 </div>
             </main>
+            {zoomedImageUrl && (
+                <ZoomedImage imageUrl={zoomedImageUrl} onClose={() => setZoomedImageUrl(null)} />
+            )}
         </div>
     );
 };
