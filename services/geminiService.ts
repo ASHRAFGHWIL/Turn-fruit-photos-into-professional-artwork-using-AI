@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from '@google/genai';
-import { TransformImageParams, UpscaleImageParams, ImageFilter } from '../types';
+import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -7,7 +7,7 @@ if (!process.env.API_KEY) {
 
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
-function constructPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeType'>): string {
+function constructTransformPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeType'>): string {
     const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
 
     const backgroundInstruction = isTransparent
@@ -30,7 +30,7 @@ Ensure the final image looks highly natural, with realistic textures and details
 `;
 }
 
-async function callGeminiForImage(model: string, parts: any[]): Promise<string> {
+async function callGeminiForImageEdit(model: string, parts: any[]): Promise<string> {
     try {
         const response = await ai.models.generateContent({
             model: model,
@@ -78,7 +78,7 @@ async function callGeminiForImage(model: string, parts: any[]): Promise<string> 
 export async function transformImage(params: TransformImageParams): Promise<string> {
     const { imageData, mimeType, ...promptParams } = params;
 
-    const textPrompt = constructPrompt(promptParams);
+    const textPrompt = constructTransformPrompt(promptParams);
 
     const imagePart = {
         inlineData: {
@@ -89,7 +89,7 @@ export async function transformImage(params: TransformImageParams): Promise<stri
 
     const textPart = { text: textPrompt };
 
-    return callGeminiForImage('gemini-2.e5-flash-image', [imagePart, textPart]);
+    return callGeminiForImageEdit('gemini-2.5-flash-image', [imagePart, textPart]);
 }
 
 
@@ -118,5 +118,63 @@ ${filterInstruction}
 
     const textPart = { text: upscalePrompt };
 
-    return callGeminiForImage('gemini-2.5-flash-image', [imagePart, textPart]);
+    return callGeminiForImageEdit('gemini-2.5-flash-image', [imagePart, textPart]);
+}
+
+function constructGenerationPrompt(params: GenerateImageParams): string {
+    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
+
+    const backgroundInstruction = isTransparent
+        ? `The image must have a fully transparent background.`
+        : `The fruit should be placed on a background described as: '${backgroundPrompt}'.`;
+
+    return `
+Generate a single, highly creative, and professional photorealistic image of a '${fruitVariety}'.
+The image should be crafted with high artistic skill and innovation.
+
+- **Style:** Photorealistic, high-resolution, with natural-looking textures and details.
+- **Lighting:** The scene must be lit with a '${lighting}' style.
+- **Camera Angle:** Use a '${cameraAngle}' perspective.
+- **Composition:** The composition should be well-framed, keeping a '${aspectRatio}' aspect ratio in mind.
+- **Background:** ${backgroundInstruction}
+- **Output Format:** The final image must be a high-resolution PNG.
+
+Do not include any text, watermarks, or borders. The focus should be solely on the fruit as the subject, presented in an artistic and professional manner.
+`;
+}
+
+export async function generateImageFromScratch(params: GenerateImageParams): Promise<string> {
+    const prompt = constructGenerationPrompt(params);
+
+    try {
+        const response = await ai.models.generateImages({
+            model: 'imagen-4.0-generate-001',
+            prompt: prompt,
+            config: {
+                numberOfImages: 1,
+                outputMimeType: 'image/png', 
+                aspectRatio: params.aspectRatio, 
+            },
+        });
+
+        if (response.generatedImages && response.generatedImages.length > 0) {
+            return response.generatedImages[0].image.imageBytes;
+        }
+
+        throw new Error('لم يتم إنشاء صورة من قبل الذكاء الاصطناعي.');
+
+    } catch (error: any) {
+        console.error("Gemini API Error (Image Generation):", error);
+        const errorMessage = (error?.message || '').toLowerCase();
+        if (errorMessage.includes('api key not valid') || errorMessage.includes('permission denied')) {
+            throw new Error('مفتاح API غير صالح أو لا يملك الإذن اللازم. يرجى مراجعة إعداداتك.');
+        }
+        if (errorMessage.includes('resource exhausted') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+            throw new Error('لقد تجاوزت حد الطلبات المسموح به. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.');
+        }
+        if (errorMessage.includes('internal') || errorMessage.includes('unavailable') || errorMessage.includes('server error')) {
+            throw new Error('حدث خطأ في خادم الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا.');
+        }
+        throw new Error('فشل توليد الصورة. الرجاء المحاولة مرة أخرى.');
+    }
 }

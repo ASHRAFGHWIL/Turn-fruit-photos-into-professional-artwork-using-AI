@@ -51,6 +51,16 @@ export interface TransformImageParams {
     fruitVariety: string;
 }
 
+export interface GenerateImageParams {
+    lighting: LightingType;
+    cameraAngle: CameraAngle;
+    aspectRatio: AspectRatio;
+    backgroundPrompt: string;
+    isTransparent: boolean;
+    fruitVariety: string;
+}
+
+
 export interface UpscaleImageParams {
     imageData: string;
     mimeType: string;

@@ -2,7 +2,7 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments } from './types';
 import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS } from './constants';
-import { transformImage, upscaleImage } from './services/geminiService';
+import { transformImage, upscaleImage, generateImageFromScratch } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
 import BackgroundSelector from './components/BackgroundSelector';
 import ColorAdjustmentsPanel from './components/ColorAdjustments';
@@ -45,6 +45,7 @@ const App: React.FC = () => {
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isEnhancing, setIsEnhancing] = useState<boolean>(false);
+    const [loadingAction, setLoadingAction] = useState<'transform' | 'generate' | null>(null);
     const [error, setError] = useState<string | null>(null);
     
     const [saveMessage, setSaveMessage] = useState<string>('');
@@ -129,6 +130,42 @@ const App: React.FC = () => {
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
     };
+    
+    const handleGenerateFromScratch = useCallback(async () => {
+        setIsLoading(true);
+        setLoadingAction('generate');
+        setGeneratedImage(null);
+        setError(null);
+        setOriginalImage(null); // Clear any existing original image
+        setOriginalImageMime('');
+        setActiveFilter(ImageFilter.None);
+        setColorAdjustments(initialColorAdjustments);
+
+        try {
+            const result = await generateImageFromScratch({
+                lighting,
+                cameraAngle,
+                aspectRatio,
+                backgroundPrompt: isTransparent ? 'transparent' : backgroundPrompt,
+                isTransparent,
+                fruitVariety,
+            });
+            
+            const filename = `ghwil-studio-generated-${Date.now()}.png`;
+            setGeneratedImage({
+                url: `data:image/png;base64,${result}`,
+                filename: filename
+            });
+
+        } catch (err) {
+            console.error(err);
+            setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء توليد الصورة.');
+        } finally {
+            setIsLoading(false);
+            setLoadingAction(null);
+        }
+    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety]);
+
 
     const handleTransform = useCallback(async () => {
         if (!originalImage) {
@@ -137,6 +174,7 @@ const App: React.FC = () => {
         }
 
         setIsLoading(true);
+        setLoadingAction('transform');
         setGeneratedImage(null);
         setError(null);
         setActiveFilter(ImageFilter.None);
@@ -169,6 +207,7 @@ const App: React.FC = () => {
             setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء تحويل الصورة.');
         } finally {
             setIsLoading(false);
+            setLoadingAction(null);
         }
     }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety]);
 
@@ -334,40 +373,52 @@ const App: React.FC = () => {
                         />
 
                         {/* Action Buttons */}
-                        <div className="space-y-3 pt-2">
-                             <div className="pt-2 border-t border-gray-700/50">
-                                <div className="grid grid-cols-2 gap-3 mb-3">
-                                    <button
-                                        onClick={handleSaveSettings}
-                                        disabled={isLoading || isEnhancing}
-                                        className="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <SaveIcon />
-                                        {saveMessage || 'حفظ الإعدادات'}
-                                    </button>
-                                    <button
-                                        onClick={loadSettings}
-                                        disabled={isLoading || isEnhancing || !hasSavedSettings}
-                                        className="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-                                    >
-                                        <LoadIcon />
-                                        تحميل الإعدادات
-                                    </button>
-                                </div>
-                            </div>
-                             <button onClick={handleTransform} disabled={isLoading || isEnhancing || !originalImage} className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none">
-                                {isLoading ? 'جاري التحويل...' : 'حوّل الصورة'}
-                            </button>
+                        <div className="space-y-3 pt-4 border-t border-gray-700/50">
+                             <p className="text-center text-sm text-gray-400 pb-2">اختر طريقة الإنشاء</p>
+                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                 <button 
+                                     onClick={handleGenerateFromScratch} 
+                                     disabled={isLoading || isEnhancing} 
+                                     className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                 >
+                                     {(isLoading && loadingAction === 'generate') ? 'جاري التوليد...' : 'توليد صورة جديدة'}
+                                 </button>
+                                 <button 
+                                     onClick={handleTransform} 
+                                     disabled={isLoading || isEnhancing || !originalImage} 
+                                     className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                 >
+                                     {(isLoading && loadingAction === 'transform') ? 'جاري التحويل...' : 'تحويل صورتك'}
+                                 </button>
+                             </div>
                              {originalImage && (
+                                 <button
+                                     onClick={handleClearImage}
+                                     disabled={isLoading || isEnhancing}
+                                     className="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                 >
+                                     <SwitchImageIcon />
+                                     مسح الصورة وبدء من جديد
+                                 </button>
+                             )}
+                            <div className="grid grid-cols-2 gap-3 pt-2">
                                 <button
-                                    onClick={handleClearImage}
+                                    onClick={handleSaveSettings}
                                     disabled={isLoading || isEnhancing}
                                     className="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <SwitchImageIcon />
-                                    اختر صورة مختلفة
+                                    <SaveIcon />
+                                    {saveMessage || 'حفظ الإعدادات'}
                                 </button>
-                            )}
+                                <button
+                                    onClick={loadSettings}
+                                    disabled={isLoading || isEnhancing || !hasSavedSettings}
+                                    className="w-full flex justify-center items-center gap-2 bg-gray-600 text-white font-bold py-2 px-4 rounded-lg shadow-md hover:bg-gray-500 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                    <LoadIcon />
+                                    تحميل الإعدادات
+                                </button>
+                            </div>
                         </div>
                     </div>
                 </aside>
