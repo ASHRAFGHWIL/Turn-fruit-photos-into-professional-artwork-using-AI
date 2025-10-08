@@ -12,10 +12,15 @@ export const LIGHTING_OPTIONS: Option<LightingType>[] = [
 export const CAMERA_ANGLE_OPTIONS: Option<CameraAngle>[] = [
     { value: CameraAngle.FrontView, label: 'منظر أمامي' },
     { value: CameraAngle.SideView, label: 'منظر جانبي' },
-    { value: CameraAngle.TopView, label: 'منظر علوي' },
     { value: CameraAngle.Angle45, label: 'زاوية 45 درجة' },
-    { value: CameraAngle.CloseUp, label: 'لقطة قريبة' },
+    { value: CameraAngle.TopView, label: 'منظر علوي' },
+    { value: CameraAngle.BirdsEyeView, label: 'منظور عين الطائر' },
+    { value: CameraAngle.LowAngle, label: 'زاوية منخفضة' },
+    { value: CameraAngle.HighAngle, label: 'زاوية مرتفعة' },
     { value: CameraAngle.WideShot, label: 'لقطة واسعة' },
+    { value: CameraAngle.CloseUp, label: 'لقطة قريبة' },
+    { value: CameraAngle.MacroShot, label: 'لقطة ماكرو' },
+    { value: CameraAngle.DutchAngle, label: 'زاوية هولندية' },
 ];
 
 export const ASPECT_RATIO_OPTIONS: Option<AspectRatio>[] = [
@@ -26,12 +31,15 @@ export const ASPECT_RATIO_OPTIONS: Option<AspectRatio>[] = [
 
 export const FILTER_OPTIONS: Option<ImageFilter>[] = [
     { value: ImageFilter.None, label: 'بدون فلتر' },
-    { value: ImageFilter.Sepia, label: 'بني داكن' },
     { value: ImageFilter.Grayscale, label: 'رمادي' },
-    { value: ImageFilter.Invert, label: 'عكس الألوان' },
+    { value: ImageFilter.Noir, label: 'نوار' },
+    { value: ImageFilter.Sepia, label: 'بني داكن' },
     { value: ImageFilter.Vintage, label: 'عتيق' },
+    { value: ImageFilter.Cool, label: 'درجة لون باردة' },
     { value: ImageFilter.Glow, label: 'توهج' },
     { value: ImageFilter.Sharpen, label: 'زيادة الحدة' },
+    { value: ImageFilter.NightMode, label: 'وضع ليلي' },
+    { value: ImageFilter.Invert, label: 'عكس الألوان' },
 ];
 
 export const OUTPUT_QUALITY_OPTIONS: Option<OutputQuality>[] = [
@@ -39,21 +47,29 @@ export const OUTPUT_QUALITY_OPTIONS: Option<OutputQuality>[] = [
     { value: OutputQuality.HighPrint, label: 'تحسين للطباعة (600 DPI)' },
 ];
 
-// Expanded the list of fruit varieties
 export const FRUIT_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'any high-quality fruit', label: 'فاكهة عامة عالية الجودة' },
+    // Common Fruits
     { value: 'Red Apple', label: 'تفاح أحمر' },
     { value: 'Green Pear', label: 'كمثرى خضراء' },
     { value: 'Strawberry', label: 'فراولة' },
     { value: 'Blueberry', label: 'توت أزرق' },
+    // American Varieties
     { value: 'Florida Orange', label: 'برتقال فلوريدا' },
     { value: 'California Grapes', label: 'عنب كاليفورنيا' },
     { value: 'Georgia Peach', label: 'خوخ جورجيا' },
     { value: 'Washington Cherry', label: 'كرز واشنطن' },
+    { value: 'Hass Avocado', label: 'أفوكادو هاس' },
+    { value: 'Wisconsin Cranberry', label: 'توت بري (ويسكونسن)' },
+    { value: 'Florida Key Lime', label: 'ليمون أخضر (فلوريدا)' },
+    { value: 'Honeycrisp Apple', label: 'تفاح هني كريسب' },
+    { value: 'Concord Grapes', label: 'عنب كونكورد' },
+    { value: 'Oregon Marionberry', label: 'توت ماريون (أوريغون)' },
+    { value: 'Hawaiian Pineapple', label: 'أناناس هاواي' },
+    // European Varieties
     { value: 'Mediterranean Lemon', label: 'ليمون متوسطي' },
     { value: 'Italian Fig', label: 'تين إيطالي' },
     { value: 'Spanish Olives', label: 'زيتون إسباني' },
-    { value: 'Hass Avocado', label: 'أفوكادو هاس' },
 ];
 
 export const BACKGROUND_GALLERY_OPTIONS: BackgroundGalleryOption[] = [
@@ -98,6 +114,7 @@ export const EXPANDED_BACKGROUND_OPTIONS: BackgroundOption[] = [
 ];
 
 export const ALL_BACKGROUND_OPTIONS: BackgroundOption[] = [
+    // FIX: Corrected syntax error by removing extraneous Arabic text and fixing the map function.
     ...BACKGROUND_GALLERY_OPTIONS.map(({ label, prompt }) => ({ label, prompt })),
     ...EXPANDED_BACKGROUND_OPTIONS,
 ];

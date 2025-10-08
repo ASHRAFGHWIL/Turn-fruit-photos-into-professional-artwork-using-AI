@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon } from './icons';
-import { ImageFilter } from '../types';
+import { ImageFilter, AspectRatio } from '../types';
 
 interface ImageWorkspaceProps {
     originalImage: string | null;
@@ -9,7 +9,10 @@ interface ImageWorkspaceProps {
     isEnhancing: boolean;
     error: string | null;
     onImageUpload: (file: File) => void;
+    aspectRatio: AspectRatio;
+    previewAspectRatio: AspectRatio | null;
     activeFilter: ImageFilter;
+    previewFilter: ImageFilter | null;
     colorFilterStyle: React.CSSProperties;
 }
 
@@ -21,9 +24,26 @@ const getFilterClassName = (filter: ImageFilter): string => {
         case ImageFilter.Vintage: return 'vintage';
         case ImageFilter.Glow: return 'glow';
         case ImageFilter.Sharpen: return 'sharpen';
+        case ImageFilter.NightMode: return 'night-mode';
+        case ImageFilter.Noir: return 'noir';
+        case ImageFilter.Cool: return 'cool';
         default: return '';
     }
 };
+
+const getAspectRatioClassName = (ratio: AspectRatio): string => {
+    switch (ratio) {
+        case AspectRatio.Square:
+            return 'aspect-square';
+        case AspectRatio.Vertical:
+            return 'aspect-[3/4]';
+        case AspectRatio.Horizontal:
+            return 'aspect-[4/3]';
+        default:
+            return 'aspect-square'; // Default fallback
+    }
+};
+
 
 const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     originalImage,
@@ -32,7 +52,10 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     isEnhancing,
     error,
     onImageUpload,
+    aspectRatio,
+    previewAspectRatio,
     activeFilter,
+    previewFilter,
     colorFilterStyle,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -48,8 +71,11 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
         fileInputRef.current?.click();
     };
 
+    const currentRatio = previewAspectRatio ?? aspectRatio;
+    const ratioClass = getAspectRatioClassName(currentRatio);
+
     const renderPlaceholder = (title: string, content: React.ReactNode) => (
-        <div className="w-full h-full bg-gray-800/60 rounded-xl border-2 border-dashed border-gray-600 flex flex-col justify-center items-center p-4 text-center">
+        <div className={`w-full max-w-full bg-gray-800/60 rounded-xl border-2 border-dashed border-gray-600 flex flex-col justify-center items-center p-4 text-center ${ratioClass}`}>
              <h3 className="text-lg font-bold text-gray-300 mb-4">{title}</h3>
             {content}
         </div>
@@ -58,9 +84,9 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 h-[60vh] min-h-[400px] bg-gray-900/50 p-4 rounded-2xl border border-gray-700">
             {/* Original Image */}
-            <div className="flex flex-col">
+            <div className="flex flex-col justify-center items-center">
                 {originalImage ? (
-                    <div className="w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center">
+                    <div className={`w-full bg-black rounded-lg overflow-hidden flex items-center justify-center ${ratioClass}`}>
                         <img src={originalImage} alt="Original" className="max-w-full max-h-full object-contain" />
                     </div>
                 ) : (
@@ -87,17 +113,17 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
             </div>
 
             {/* Generated Image */}
-            <div className="flex flex-col">
+            <div className="flex flex-col justify-center items-center">
                  {isLoading ? (
                     renderPlaceholder('النتيجة', <LoadingSpinner />)
                 ) : error ? (
                     renderPlaceholder('خطأ', <div className="flex flex-col items-center"><ErrorIcon /><p className="mt-2 text-red-400">{error}</p></div>)
                 ) : generatedImage ? (
-                    <div className="w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative">
+                    <div className={`w-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative ${ratioClass}`}>
                         <img 
                             src={generatedImage} 
                             alt="Generated" 
-                            className={`max-w-full max-h-full object-contain transition-all duration-300 ${getFilterClassName(activeFilter)}`}
+                            className={`max-w-full max-h-full object-contain transition-all duration-300 ${getFilterClassName(previewFilter ?? activeFilter)}`}
                             style={colorFilterStyle}
                         />
                         {isEnhancing && (

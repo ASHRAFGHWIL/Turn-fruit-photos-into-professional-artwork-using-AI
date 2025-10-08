@@ -40,9 +40,11 @@ const App: React.FC = () => {
     const [cameraAngle, setCameraAngle] = useState<CameraAngle>(CameraAngle.FrontView);
     const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].value);
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Square);
+    const [previewAspectRatio, setPreviewAspectRatio] = useState<AspectRatio | null>(null);
     const [backgroundPrompt, setBackgroundPrompt] = useState<string>(BACKGROUND_GALLERY_OPTIONS[0].prompt);
     const [isTransparent, setIsTransparent] = useState<boolean>(false);
     const [activeFilter, setActiveFilter] = useState<ImageFilter>(ImageFilter.None);
+    const [previewFilter, setPreviewFilter] = useState<ImageFilter | null>(null);
     const [colorAdjustments, setColorAdjustments] = useState<ColorAdjustments>(initialColorAdjustments);
     const [outputQuality, setOutputQuality] = useState<OutputQuality>(OutputQuality.Standard);
 
@@ -370,6 +372,15 @@ const App: React.FC = () => {
                 case ImageFilter.Sharpen: 
                     artisticFilterString = 'contrast(1.4) brightness(0.95)'; 
                     break;
+                case ImageFilter.NightMode:
+                    artisticFilterString = 'brightness(0.8) contrast(1.4) sepia(0.3) hue-rotate(-15deg)';
+                    break;
+                case ImageFilter.Noir:
+                    artisticFilterString = 'grayscale(1) contrast(1.6) brightness(0.9)';
+                    break;
+                case ImageFilter.Cool:
+                    artisticFilterString = 'sepia(0.3) hue-rotate(185deg) contrast(1.1) saturate(1.3)';
+                    break;
             }
     
             const colorAdjustmentsFilterString = `
@@ -476,15 +487,28 @@ const App: React.FC = () => {
                         </div>
                         {/* Aspect Ratio */}
                         <div>
-                            <label htmlFor="aspectRatio" className="block text-sm font-medium text-gray-300 mb-2">أبعاد الصورة</label>
-                             <select 
-                                id="aspectRatio" 
-                                value={aspectRatio} 
-                                onChange={(e) => setAspectRatio(e.target.value as AspectRatio)} 
-                                className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500"
-                            >
-                                {ASPECT_RATIO_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                            </select>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">أبعاد الصورة</label>
+                            <div className="flex justify-between items-center gap-2">
+                                {ASPECT_RATIO_OPTIONS.map(opt => (
+                                    <button
+                                        key={opt.value}
+                                        onClick={() => {
+                                            setAspectRatio(opt.value);
+                                            setPreviewAspectRatio(null);
+                                        }}
+                                        onMouseEnter={() => setPreviewAspectRatio(opt.value)}
+                                        onMouseLeave={() => setPreviewAspectRatio(null)}
+                                        className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                            ${aspectRatio === opt.value
+                                                ? 'bg-purple-600 text-white shadow-md'
+                                                : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                                            }
+                                        `}
+                                    >
+                                        {opt.label}
+                                    </button>
+                                ))}
+                            </div>
                         </div>
                         {/* Background */}
                         <BackgroundSelector
@@ -558,7 +582,10 @@ const App: React.FC = () => {
                         isEnhancing={isEnhancing}
                         error={error}
                         onImageUpload={handleImageUpload}
+                        aspectRatio={aspectRatio}
+                        previewAspectRatio={previewAspectRatio}
                         activeFilter={activeFilter}
+                        previewFilter={previewFilter}
                         colorFilterStyle={colorFilterStyle}
                     />
                      {generatedImage && !isLoading && !error && (
@@ -573,7 +600,12 @@ const App: React.FC = () => {
                                         {FILTER_OPTIONS.map(opt => (
                                             <button
                                                 key={opt.value}
-                                                onClick={() => setActiveFilter(opt.value)}
+                                                onClick={() => {
+                                                    setActiveFilter(opt.value);
+                                                    setPreviewFilter(null);
+                                                }}
+                                                onMouseEnter={() => setPreviewFilter(opt.value)}
+                                                onMouseLeave={() => setPreviewFilter(null)}
                                                 disabled={isEnhancing}
                                                 className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
                                                     ${activeFilter === opt.value

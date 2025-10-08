@@ -9,12 +9,21 @@ export enum LightingType {
 }
 
 export enum CameraAngle {
+    // Standard Views
     FrontView = 'front view',
     SideView = 'side view',
-    TopView = 'top view',
     Angle45 = '45-degree angle',
-    CloseUp = 'close-up shot',
+    // Top/Bottom Views
+    TopView = 'top view',
+    BirdsEyeView = "bird's eye view",
+    LowAngle = 'low angle shot',
+    HighAngle = 'high angle shot',
+    // Shot types
     WideShot = 'wide shot',
+    CloseUp = 'close-up shot',
+    MacroShot = 'macro shot',
+    // Artistic
+    DutchAngle = 'dutch angle shot',
 }
 
 export enum AspectRatio {
@@ -31,6 +40,9 @@ export enum ImageFilter {
     Vintage = 'vintage',
     Glow = 'soft glow',
     Sharpen = 'sharpen',
+    NightMode = 'night mode',
+    Noir = 'noir',
+    Cool = 'cool tone',
 }
 
 export enum OutputQuality {
