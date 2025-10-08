@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from '@google/genai';
-import { TransformImageParams } from '../types';
+import { TransformImageParams, UpscaleImageParams, ImageFilter } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -8,7 +8,7 @@ if (!process.env.API_KEY) {
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
 
 function constructPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeType'>): string {
-    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent } = params;
+    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
 
     const backgroundInstruction = isTransparent
         ? `- Background: Remove the existing background and replace it with a fully transparent one.
@@ -18,7 +18,7 @@ function constructPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeT
     
     return `
 You are an expert photo editor AI. Your task is to edit and enhance an image of fruit to create a professional, high-resolution, and photorealistic result.
-The fruit in the image could be any variety from around the world, including America and Europe.
+The main subject is a fruit, specifically '${fruitVariety}'. Generate a highly variable, high-resolution, and natural-looking image of this fruit variety.
 Apply the following specific transformations creatively and avoid making a simple copy of the original. Innovate on the composition.
 
 - Lighting: Re-light the scene with a '${lighting}' style.
@@ -30,26 +30,11 @@ Ensure the final image looks highly natural, with realistic textures and details
 `;
 }
 
-export async function transformImage(params: TransformImageParams): Promise<string> {
-    const { imageData, mimeType, ...promptParams } = params;
-
-    const textPrompt = constructPrompt(promptParams);
-
-    const imagePart = {
-        inlineData: {
-            data: imageData,
-            mimeType: mimeType,
-        },
-    };
-
-    const textPart = { text: textPrompt };
-
+async function callGeminiForImage(model: string, parts: any[]): Promise<string> {
     try {
         const response = await ai.models.generateContent({
-            model: 'gemini-2.5-flash-image',
-            contents: {
-                parts: [imagePart, textPart],
-            },
+            model: model,
+            contents: { parts },
             config: {
                 responseModalities: [Modality.IMAGE, Modality.TEXT],
             },
@@ -66,7 +51,6 @@ export async function transformImage(params: TransformImageParams): Promise<stri
     } catch (error: any) {
         console.error("Gemini API Error:", error);
 
-        // Passthrough for our specific application-level error
         if (error?.message?.includes('لم يتم إنشاء صورة')) {
              throw error;
         }
@@ -86,7 +70,53 @@ export async function transformImage(params: TransformImageParams): Promise<stri
             throw new Error('حدث خطأ في خادم الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا.');
         }
         
-        // Default error if no specific cases match
         throw new Error('فشل الاتصال بخدمة الذكاء الاصطناعي. الرجاء المحاولة مرة أخرى.');
     }
+}
+
+
+export async function transformImage(params: TransformImageParams): Promise<string> {
+    const { imageData, mimeType, ...promptParams } = params;
+
+    const textPrompt = constructPrompt(promptParams);
+
+    const imagePart = {
+        inlineData: {
+            data: imageData,
+            mimeType: mimeType,
+        },
+    };
+
+    const textPart = { text: textPrompt };
+
+    return callGeminiForImage('gemini-2.e5-flash-image', [imagePart, textPart]);
+}
+
+
+export async function upscaleImage(params: UpscaleImageParams): Promise<string> {
+    const { imageData, mimeType, filter } = params;
+
+    const filterInstruction = (filter && filter !== ImageFilter.None)
+        ? `- Apply the following visual filter to the image: '${filter}'.`
+        : '';
+
+    const upscalePrompt = `
+You are an expert AI image upscaler. Your task is to take the provided image and increase its resolution to the maximum possible quality.
+- Enhance details, sharpen edges, and remove any compression artifacts.
+- Ensure the result is a crisp, clean, high-resolution version of the original.
+${filterInstruction}
+- Do not add, remove, or change any other content, elements, or colors in the image, other than applying the requested filter.
+- The output MUST be a high-resolution PNG image.
+`;
+
+    const imagePart = {
+        inlineData: {
+            data: imageData,
+            mimeType: mimeType,
+        },
+    };
+
+    const textPart = { text: upscalePrompt };
+
+    return callGeminiForImage('gemini-2.5-flash-image', [imagePart, textPart]);
 }

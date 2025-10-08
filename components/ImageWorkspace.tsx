@@ -1,21 +1,39 @@
-
 import React, { useCallback, useRef } from 'react';
 import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon } from './icons';
+import { ImageFilter } from '../types';
 
 interface ImageWorkspaceProps {
     originalImage: string | null;
     generatedImage: string | null;
     isLoading: boolean;
+    isEnhancing: boolean;
     error: string | null;
     onImageUpload: (file: File) => void;
+    activeFilter: ImageFilter;
+    colorFilterStyle: React.CSSProperties;
 }
+
+const getFilterClassName = (filter: ImageFilter): string => {
+    switch (filter) {
+        case ImageFilter.Sepia: return 'sepia';
+        case ImageFilter.Grayscale: return 'grayscale';
+        case ImageFilter.Invert: return 'invert';
+        case ImageFilter.Vintage: return 'vintage';
+        case ImageFilter.Glow: return 'glow';
+        case ImageFilter.Sharpen: return 'sharpen';
+        default: return '';
+    }
+};
 
 const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     originalImage,
     generatedImage,
     isLoading,
+    isEnhancing,
     error,
     onImageUpload,
+    activeFilter,
+    colorFilterStyle,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -75,8 +93,19 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
                 ) : error ? (
                     renderPlaceholder('خطأ', <div className="flex flex-col items-center"><ErrorIcon /><p className="mt-2 text-red-400">{error}</p></div>)
                 ) : generatedImage ? (
-                    <div className="w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center">
-                        <img src={generatedImage} alt="Generated" className="max-w-full max-h-full object-contain" />
+                    <div className="w-full h-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative">
+                        <img 
+                            src={generatedImage} 
+                            alt="Generated" 
+                            className={`max-w-full max-h-full object-contain transition-all duration-300 ${getFilterClassName(activeFilter)}`}
+                            style={colorFilterStyle}
+                        />
+                        {isEnhancing && (
+                            <div className="absolute inset-0 bg-black/60 flex flex-col justify-center items-center rounded-lg">
+                                <LoadingSpinner />
+                                <p className="text-white mt-2 font-semibold">جاري تحسين الصورة...</p>
+                            </div>
+                        )}
                     </div>
                 ) : (
                     renderPlaceholder('النتيجة', <div className="flex flex-col items-center text-gray-500"><ImageIcon /><p className="mt-2">ستظهر الصورة المُعدلة هنا</p></div>)
