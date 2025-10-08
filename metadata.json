@@ -1,0 +1,5 @@
+{
+  "name": "Ghwil Studio",
+  "description": "An AI-powered image editing tool for generating high-quality, professional photos of fruits with customizable lighting, angles, backgrounds, and aspect ratios using the Gemini API.",
+  "requestFramePermissions": []
+}
