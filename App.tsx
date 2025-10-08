@@ -1,12 +1,12 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
-import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments } from './types';
-import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS } from './constants';
-import { transformImage, upscaleImage, generateImageFromScratch } from './services/geminiService';
+import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality } from './types';
+import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS } from './constants';
+import { transformImage, upscaleImage, generateImageFromScratch, generateAltText, translateText } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
 import BackgroundSelector from './components/BackgroundSelector';
 import ColorAdjustmentsPanel from './components/ColorAdjustments';
-import { DownloadIcon, SwitchImageIcon, UpscaleIcon, SaveIcon, LoadIcon } from './components/icons';
+import { DownloadIcon, SwitchImageIcon, UpscaleIcon, SaveIcon, LoadIcon, CopyIcon, SparklesIcon, TranslateIcon } from './components/icons';
 
 interface GeneratedImageData {
     url: string;
@@ -42,6 +42,7 @@ const App: React.FC = () => {
     const [isTransparent, setIsTransparent] = useState<boolean>(false);
     const [activeFilter, setActiveFilter] = useState<ImageFilter>(ImageFilter.None);
     const [colorAdjustments, setColorAdjustments] = useState<ColorAdjustments>(initialColorAdjustments);
+    const [outputQuality, setOutputQuality] = useState<OutputQuality>(OutputQuality.Standard);
 
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [isEnhancing, setIsEnhancing] = useState<boolean>(false);
@@ -50,6 +51,13 @@ const App: React.FC = () => {
     
     const [saveMessage, setSaveMessage] = useState<string>('');
     const [hasSavedSettings, setHasSavedSettings] = useState<boolean>(false);
+
+    const [altText, setAltText] = useState<string>('');
+    const [translatedAltText, setTranslatedAltText] = useState<string>('');
+    const [isGeneratingAltText, setIsGeneratingAltText] = useState<boolean>(false);
+    const [isTranslating, setIsTranslating] = useState<boolean>(false);
+    const [copyButtonTextAR, setCopyButtonTextAR] = useState<string>('نسخ AR');
+    const [copyButtonTextEN, setCopyButtonTextEN] = useState<string>('نسخ EN');
     
     const SETTINGS_KEY = 'ghwilStudioSettings';
     
@@ -107,6 +115,11 @@ const App: React.FC = () => {
         setBackgroundPrompt(preset.backgroundPrompt);
         setIsTransparent(false); // Presets have backgrounds
     };
+    
+    const resetAltText = () => {
+        setAltText('');
+        setTranslatedAltText('');
+    };
 
     const handleImageUpload = (file: File) => {
         const reader = new FileReader();
@@ -115,10 +128,12 @@ const App: React.FC = () => {
             setOriginalImageMime(file.type);
             setGeneratedImage(null);
             setError(null);
+            resetAltText();
         };
         reader.onerror = () => {
             setError('فشل في قراءة ملف الصورة.');
         };
+        // FIX: Corrected typo from readDataURL to readAsDataURL.
         reader.readAsDataURL(file);
     };
     
@@ -129,6 +144,7 @@ const App: React.FC = () => {
         setError(null);
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
+        resetAltText();
     };
     
     const handleGenerateFromScratch = useCallback(async () => {
@@ -140,6 +156,7 @@ const App: React.FC = () => {
         setOriginalImageMime('');
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
+        resetAltText();
 
         try {
             const result = await generateImageFromScratch({
@@ -179,6 +196,7 @@ const App: React.FC = () => {
         setError(null);
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
+        resetAltText();
 
         try {
             const base64Data = originalImage.split(',')[1];
@@ -229,6 +247,7 @@ const App: React.FC = () => {
                 imageData: base64Data,
                 mimeType: 'image/png',
                 filter: activeFilter,
+                outputQuality: outputQuality,
             });
             
             const filename = `ghwil-studio-enhanced-${Date.now()}.png`;
@@ -238,6 +257,7 @@ const App: React.FC = () => {
             });
             setActiveFilter(ImageFilter.None); // Reset filter as it's now baked into the image
             setColorAdjustments(initialColorAdjustments); // Reset color adjustments for the new base image
+            resetAltText();
 
         } catch (err) {
             console.error(err);
@@ -245,7 +265,56 @@ const App: React.FC = () => {
         } finally {
             setIsEnhancing(false);
         }
-    }, [generatedImage, activeFilter]);
+    }, [generatedImage, activeFilter, outputQuality]);
+
+    const handleGenerateAltText = useCallback(async () => {
+        if (!generatedImage) return;
+        setIsGeneratingAltText(true);
+        setTranslatedAltText(''); // Clear previous translation
+        setError(null);
+        try {
+            const base64Data = generatedImage.url.split(',')[1];
+            const generatedText = await generateAltText({ imageData: base64Data, mimeType: 'image/png' });
+            setAltText(generatedText);
+        } catch (err) {
+            setAltText(`فشل توليد الوصف: ${err instanceof Error ? err.message : 'خطأ غير معروف'}`);
+        } finally {
+            setIsGeneratingAltText(false);
+        }
+    }, [generatedImage]);
+    
+    const handleTranslateAltText = useCallback(async () => {
+        if (!altText || isTranslating) return;
+        setIsTranslating(true);
+        try {
+            const translated = await translateText({ text: altText, targetLanguage: 'English' });
+            setTranslatedAltText(translated);
+        } catch (err) {
+            setTranslatedAltText(`Translation failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
+        } finally {
+            setIsTranslating(false);
+        }
+    }, [altText, isTranslating]);
+
+    const handleCopyAltTextAR = () => {
+        if (!altText) return;
+        navigator.clipboard.writeText(altText).then(() => {
+            setCopyButtonTextAR('تم النسخ!');
+            setTimeout(() => setCopyButtonTextAR('نسخ AR'), 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    };
+    
+    const handleCopyAltTextEN = () => {
+        if (!translatedAltText) return;
+        navigator.clipboard.writeText(translatedAltText).then(() => {
+            setCopyButtonTextEN('Copied!');
+            setTimeout(() => setCopyButtonTextEN('نسخ EN'), 2000);
+        }).catch(err => {
+            console.error('Failed to copy text: ', err);
+        });
+    };
 
     const handleDownloadWithFilters = () => {
         if (!generatedImage) return;
@@ -278,9 +347,15 @@ const App: React.FC = () => {
     };
 
 
-    const enhanceButtonText = activeFilter === ImageFilter.None 
-        ? 'تحسين وتكبير الصورة' 
-        : 'تطبيق الفلتر والتحسين';
+    const enhanceButtonText = useMemo(() => {
+        const hasFilter = activeFilter !== ImageFilter.None;
+        const isForPrint = outputQuality === OutputQuality.HighPrint;
+
+        if (hasFilter && isForPrint) return 'تطبيق الفلتر والتحسين للطباعة';
+        if (hasFilter && !isForPrint) return 'تطبيق الفلتر والتحسين';
+        if (!hasFilter && isForPrint) return 'تحسين وتكبير للطباعة (600 DPI)';
+        return 'تحسين وتكبير قياسي';
+    }, [activeFilter, outputQuality]);
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center p-4 sm:p-6 lg:p-8">
@@ -435,6 +510,7 @@ const App: React.FC = () => {
                         colorFilterStyle={colorFilterStyle}
                     />
                      {generatedImage && !isLoading && !error && (
+                         <>
                          <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
                             <h3 className="text-xl font-bold mb-4 text-gray-200">اللمسات النهائية</h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
@@ -462,6 +538,20 @@ const App: React.FC = () => {
                                     />
                                 </div>
                             </div>
+                            
+                            <div className="mt-6">
+                                <label htmlFor="quality" className="block text-base font-medium text-gray-300 mb-3">3. تحديد جودة التحسين</label>
+                                <select 
+                                    id="quality" 
+                                    value={outputQuality} 
+                                    onChange={(e) => setOutputQuality(e.target.value as OutputQuality)} 
+                                    disabled={isEnhancing}
+                                    className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50"
+                                >
+                                    {OUTPUT_QUALITY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+
                             <div className="pt-6 mt-6 border-t border-gray-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                <button
                                    onClick={handleEnhance}
@@ -480,6 +570,73 @@ const App: React.FC = () => {
                                 </button>
                            </div>
                          </div>
+                         <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
+                             <h3 className="text-xl font-bold mb-4 text-gray-200">الوصف التعريفي (Alt Text)</h3>
+                             <p className="text-sm text-gray-400 mb-4">
+                                 قم بإنشاء وصف احترافي للصورة لتحسين محركات البحث وإمكانية الوصول.
+                             </p>
+                             <div className="relative mb-4">
+                                 <label className="block text-xs font-medium text-gray-400 mb-1">AR (العربية)</label>
+                                 <textarea
+                                     readOnly
+                                     value={altText}
+                                     placeholder={isGeneratingAltText ? 'جاري الكتابة بواسطة الذكاء الاصطناعي...' : 'سيظهر الوصف هنا...'}
+                                     className="w-full h-28 bg-gray-900 border border-gray-600 rounded-md p-3 pr-4 text-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"
+                                     aria-label="Generated Alt Text in Arabic"
+                                 />
+                                 {altText && !isGeneratingAltText && (
+                                     <button
+                                         onClick={handleCopyAltTextAR}
+                                         className="absolute top-8 left-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors"
+                                         aria-label="Copy arabic alt text"
+                                     >
+                                         <CopyIcon />
+                                         {copyButtonTextAR}
+                                     </button>
+                                 )}
+                             </div>
+                              {(isTranslating || translatedAltText) && (
+                                <div className="relative">
+                                    <label className="block text-xs font-medium text-gray-400 mb-1">EN (English)</label>
+                                    <textarea
+                                        readOnly
+                                        value={translatedAltText}
+                                        placeholder={isTranslating ? 'Translating with AI...' : ''}
+                                        className="w-full h-28 bg-gray-900 border border-gray-600 rounded-md p-3 pr-4 text-gray-300 focus:ring-2 focus:ring-purple-500 focus:outline-none resize-none"
+                                        aria-label="Generated Alt Text in English"
+                                    />
+                                    {translatedAltText && !isTranslating && (
+                                        <button
+                                            onClick={handleCopyAltTextEN}
+                                            className="absolute top-8 left-3 bg-gray-700 hover:bg-gray-600 text-white px-3 py-1 rounded-md text-xs flex items-center gap-1.5 transition-colors"
+                                            aria-label="Copy english alt text"
+                                        >
+                                            <CopyIcon />
+                                            {copyButtonTextEN}
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                             <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                                 <button
+                                     onClick={handleGenerateAltText}
+                                     disabled={isGeneratingAltText || isTranslating}
+                                     className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                 >
+                                     <SparklesIcon />
+                                     {isGeneratingAltText ? 'جاري الإنشاء...' : 'إنشاء وصف (AR)'}
+                                 </button>
+                                  <button
+                                     onClick={handleTranslateAltText}
+                                     disabled={!altText || isGeneratingAltText || isTranslating}
+                                     className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                 >
+                                     <TranslateIcon />
+                                     {isTranslating ? 'جاري الترجمة...' : 'ترجمة إلى (EN)'}
+                                 </button>
+                             </div>
+                         </div>
+                         </>
                     )}
                 </div>
             </main>

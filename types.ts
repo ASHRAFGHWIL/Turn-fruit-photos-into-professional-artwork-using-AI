@@ -32,6 +32,11 @@ export enum ImageFilter {
     Sharpen = 'Sharpen',
 }
 
+export enum OutputQuality {
+    Standard = 'standard',
+    HighPrint = 'high_print',
+}
+
 export interface Preset {
     label: string;
     lighting: LightingType;
@@ -65,6 +70,17 @@ export interface UpscaleImageParams {
     imageData: string;
     mimeType: string;
     filter?: ImageFilter;
+    outputQuality: OutputQuality;
+}
+
+export interface GenerateAltTextParams {
+    imageData: string;
+    mimeType: string;
+}
+
+export interface TranslateTextParams {
+    text: string;
+    targetLanguage: string;
 }
 
 export interface Option<T> {

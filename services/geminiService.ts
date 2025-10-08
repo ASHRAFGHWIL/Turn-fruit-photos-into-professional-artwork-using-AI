@@ -1,5 +1,5 @@
 import { GoogleGenAI, Modality } from '@google/genai';
-import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams } from '../types';
+import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams, OutputQuality, GenerateAltTextParams, TranslateTextParams } from '../types';
 
 if (!process.env.API_KEY) {
     throw new Error("API_KEY environment variable not set");
@@ -94,16 +94,23 @@ export async function transformImage(params: TransformImageParams): Promise<stri
 
 
 export async function upscaleImage(params: UpscaleImageParams): Promise<string> {
-    const { imageData, mimeType, filter } = params;
+    const { imageData, mimeType, filter, outputQuality } = params;
 
     const filterInstruction = (filter && filter !== ImageFilter.None)
         ? `- Apply the following visual filter to the image: '${filter}'.`
         : '';
+        
+    const qualityInstruction = outputQuality === OutputQuality.HighPrint
+        ? `Your task is to take the provided image and upscale it to double its current pixel dimensions. The target is to achieve a resolution suitable for high-quality printing at 600 DPI.
+- Enhance details, sharpen edges, and remove any compression artifacts meticulously.
+- Ensure the result is an extremely crisp, clean, and detailed high-resolution version of the original.`
+        : `Your task is to take the provided image and increase its resolution to the maximum possible quality for web use.
+- Enhance details, sharpen edges, and remove any compression artifacts.
+- Ensure the result is a crisp, clean, high-resolution version of the original.`;
 
     const upscalePrompt = `
-You are an expert AI image upscaler. Your task is to take the provided image and increase its resolution to the maximum possible quality.
-- Enhance details, sharpen edges, and remove any compression artifacts.
-- Ensure the result is a crisp, clean, high-resolution version of the original.
+You are an expert AI image upscaler.
+${qualityInstruction}
 ${filterInstruction}
 - Do not add, remove, or change any other content, elements, or colors in the image, other than applying the requested filter.
 - The output MUST be a high-resolution PNG image.
@@ -176,5 +183,69 @@ export async function generateImageFromScratch(params: GenerateImageParams): Pro
             throw new Error('حدث خطأ في خادم الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا.');
         }
         throw new Error('فشل توليد الصورة. الرجاء المحاولة مرة أخرى.');
+    }
+}
+
+
+export async function generateAltText(params: GenerateAltTextParams): Promise<string> {
+    const { imageData, mimeType } = params;
+
+    const prompt = `
+Act as an expert in SEO and web accessibility.
+Your task is to generate a descriptive, professional, and concise alt-text for the following image.
+The description must be in Arabic and should not exceed 500 characters.
+Describe the following elements in the image:
+1.  **Main Subject:** Identify the fruit and its state (e.g., whole, sliced, fresh).
+2.  **Composition:** Briefly describe how the subject is arranged.
+3.  **Lighting:** Mention the style of lighting (e.g., soft studio light, warm natural light).
+4.  **Background:** Describe the background context.
+5.  **Overall Mood:** Convey the general feeling of the image (e.g., clean, rustic, vibrant).
+
+Combine these points into a fluent, natural-sounding sentence or two.
+`;
+
+    const imagePart = {
+        inlineData: {
+            data: imageData,
+            mimeType: mimeType,
+        },
+    };
+
+    const textPart = { text: prompt };
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: { parts: [imagePart, textPart] },
+        });
+
+        return response.text;
+    } catch (error: any) {
+        console.error("Gemini API Error (Alt Text Generation):", error);
+        throw new Error('فشل إنشاء الوصف التعريفي. يرجى المحاولة مرة أخرى.');
+    }
+}
+
+export async function translateText(params: TranslateTextParams): Promise<string> {
+    const { text, targetLanguage } = params;
+    const prompt = `
+You are an expert translator specializing in technical and descriptive content for the web.
+Translate the following Arabic 'alt text' into professional, high-quality ${targetLanguage}.
+Maintain a descriptive and professional tone. Do not add any extra explanations, quotation marks, or introductory phrases.
+Your response should ONLY be the translated text.
+
+Arabic Text: "${text}"
+`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-2.5-flash',
+            contents: prompt,
+        });
+
+        return response.text;
+    } catch (error: any) {
+        console.error("Gemini API Error (Translation):", error);
+        throw new Error('فشلت عملية الترجمة. يرجى المحاولة مرة أخرى.');
     }
 }

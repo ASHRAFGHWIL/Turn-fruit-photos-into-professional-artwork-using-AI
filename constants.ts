@@ -1,4 +1,4 @@
-import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption } from './types';
+import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality } from './types';
 
 export const LIGHTING_OPTIONS: Option<LightingType>[] = [
     { value: LightingType.Studio, label: 'إضاءة استوديو' },
@@ -32,6 +32,11 @@ export const FILTER_OPTIONS: Option<ImageFilter>[] = [
     { value: ImageFilter.Vintage, label: 'عتيق' },
     { value: ImageFilter.Glow, label: 'توهج' },
     { value: ImageFilter.Sharpen, label: 'زيادة الحدة' },
+];
+
+export const OUTPUT_QUALITY_OPTIONS: Option<OutputQuality>[] = [
+    { value: OutputQuality.Standard, label: 'تحسين قياسي (للشاشة)' },
+    { value: OutputQuality.HighPrint, label: 'تحسين للطباعة (600 DPI)' },
 ];
 
 // Expanded the list of fruit varieties

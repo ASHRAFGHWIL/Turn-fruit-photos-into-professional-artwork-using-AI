@@ -55,3 +55,22 @@ export const LoadIcon: React.FC = () => (
         <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" />
     </svg>
 );
+
+export const CopyIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+    </svg>
+);
+
+export const SparklesIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.293 2.293a1 1 0 010 1.414L15 12l-1.293 1.293a1 1 0 01-1.414 0L10 10.414a1 1 0 010-1.414L12.293 6.707a1 1 0 011.414 0L15 9h0l1.293-1.293a1 1 0 011.414 0L20 10.414a1 1 0 010 1.414L17.707 14.121a1 1 0 01-1.414 0L15 12.414V15a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2.586a1 1 0 010-1.414l2.293-2.293a1 1 0 011.414 0L15 10V9z" />
+    </svg>
+);
+
+export const TranslateIcon: React.FC = () => (
+    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+        <path strokeLinecap="round" strokeLinejoin="round" d="M3 5h12M9 3v2m4.25 16h-6.5A2.25 2.25 0 013 18.75V8.25A2.25 2.25 0 015.25 6H10" />
+        <path strokeLinecap="round" strokeLinejoin="round" d="M15 15l-3-3m0 0l3-3m-3 3h8m-1 5l3-3m0 0l-3-3m3 3H10" />
+    </svg>
+);
