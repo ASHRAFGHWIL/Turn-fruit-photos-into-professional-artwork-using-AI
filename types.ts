@@ -1,4 +1,5 @@
 
+
 export enum LightingType {
     Studio = 'studio lighting',
     Natural = 'natural lighting',
@@ -61,6 +62,7 @@ export enum OutputQuality {
 export enum SubjectType {
     Fruit = 'fruit',
     Vegetable = 'vegetable',
+    Sandwich = 'sandwich',
 }
 
 export interface Option<T> {
@@ -82,6 +84,7 @@ export interface Preset {
     subjectType: SubjectType;
     fruitVariety: string;
     vegetableVariety: string;
+    sandwichVariety: string;
     backgroundPrompt: string;
 }
 

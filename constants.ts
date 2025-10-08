@@ -116,6 +116,24 @@ export const VEGETABLE_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'Romanesco Broccoli', label: 'بروكلي رومانسكي' },
 ];
 
+export const SANDWICH_VARIETY_OPTIONS: Option<string>[] = [
+    { value: 'any high-quality sandwich', label: 'ساندويتش عام عالي الجودة' },
+    // American Sandwiches
+    { value: 'Classic Philly Cheesesteak sandwich', label: 'فيلي تشيز ستيك' },
+    { value: 'Reuben sandwich with corned beef and sauerkraut', label: 'ساندويتش روبن' },
+    { value: 'BLT (Bacon, Lettuce, Tomato) sandwich', label: 'ساندويتش بي إل تي' },
+    { value: 'Classic American Club Sandwich', label: 'كلوب ساندويتش' },
+    { value: 'Pulled Pork Sandwich with barbecue sauce', label: 'ساندويتش اللحم المسحوب' },
+    { value: 'New England Lobster Roll', label: 'لوبستر رول' },
+    // European Sandwiches
+    { value: 'Italian Panini with prosciutto and mozzarella', label: 'بانيني إيطالي' },
+    { value: 'French Croque Monsieur', label: 'كروك موسيو الفرنسي' },
+    { value: 'Danish Smørrebrød (open-faced sandwich)', label: 'سموربرود دنماركي' },
+    { value: 'Spanish Bocadillo de Calamares', label: 'بوكاديو كالاماري الإسباني' },
+    { value: 'German Doner Kebab in pita bread', label: 'دونر كباب ألماني' },
+    { value: 'Greek Gyro in pita bread', label: 'جيرو يوناني' },
+];
+
 
 export const BACKGROUND_GALLERY_OPTIONS: BackgroundGalleryOption[] = [
     {
@@ -172,6 +190,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Washington Cherry',
         vegetableVariety: 'Red Bell Pepper',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'in a lush orchard during a warm sunset, with soft, glowing light filtering through the leaves',
     },
     {
@@ -181,6 +200,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Hass Avocado',
         vegetableVariety: 'Cucumber',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'sliced neatly on a clean, white marble countertop next to a chef\'s knife',
     },
     {
@@ -190,6 +210,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Florida Orange',
         vegetableVariety: 'Carrot',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'a dynamic splash of water frozen in time against a vibrant, abstract blue and orange background',
     },
     {
@@ -199,6 +220,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Blueberry',
         vegetableVariety: 'Mushroom',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'a handful of fresh blueberries resting on a mossy log in a misty forest setting',
     },
     {
@@ -208,6 +230,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Hawaiian Pineapple',
         vegetableVariety: 'Corn on the cob',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'on a sandy beach with a blurred turquoise ocean and palm leaves in the background',
     },
     {
@@ -217,6 +240,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'California Grapes',
         vegetableVariety: 'Eggplant',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'spilling out of a silver goblet onto a dark, draped velvet cloth, reminiscent of a classic Dutch still life painting',
     },
     {
@@ -226,6 +250,7 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Green Pear',
         vegetableVariety: 'Lettuce Head',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'perfectly placed on a simple slate plate against a soft, out-of-focus gray background',
     },
     {
@@ -235,6 +260,27 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Red Apple',
         vegetableVariety: 'Red Tomato on the Vine',
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
         backgroundPrompt: 'in a rustic wooden crate at a bustling farmers market, with other produce softly blurred in the background',
+    },
+    {
+        label: 'وجبة ديلي نيويورك',
+        lighting: LightingType.Dramatic,
+        cameraAngle: CameraAngle.Angle45,
+        subjectType: SubjectType.Sandwich,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
+        sandwichVariety: 'Reuben sandwich with corned beef and sauerkraut',
+        backgroundPrompt: 'on a dark wooden table in a classic New York deli, with a pickle spear on the side',
+    },
+    {
+        label: 'مقهى باريسي',
+        lighting: LightingType.Natural,
+        cameraAngle: CameraAngle.SideView,
+        subjectType: SubjectType.Sandwich,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
+        sandwichVariety: 'French Croque Monsieur',
+        backgroundPrompt: 'on a small marble cafe table in Paris, with a blurred street scene in the background',
     },
 ];

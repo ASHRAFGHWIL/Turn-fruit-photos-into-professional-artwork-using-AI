@@ -196,17 +196,19 @@ export async function generateAltText(params: GenerateAltTextParams): Promise<st
     const { imageData, mimeType } = params;
 
     const prompt = `
-Act as an expert in SEO and web accessibility.
-Your task is to generate a descriptive, professional, and concise alt-text for the following image.
-The description must be in Arabic and should not exceed 500 characters.
-Describe the following elements in the image:
-1.  **Main Subject:** Identify the fruit or vegetable and its state (e.g., whole, sliced, fresh).
-2.  **Composition:** Briefly describe how the subject is arranged.
-3.  **Lighting:** Mention the style of lighting (e.g., soft studio light, warm natural light).
-4.  **Background:** Describe the background context.
-5.  **Overall Mood:** Convey the general feeling of the image (e.g., clean, rustic, vibrant).
+Act as an expert in SEO, web accessibility, and food photography analysis.
+Your task is to generate a highly descriptive, professional, and evocative alt-text for the provided image, in Arabic. The description should be rich in detail but concise, not exceeding 500 characters.
 
-Combine these points into a fluent, natural-sounding sentence or two.
+Analyze the image deeply, focusing on the following aspects:
+
+1.  **Main Subject:** Identify the fruit or vegetable with precision. Describe its state (e.g., perfectly ripe, freshly sliced, glistening with water droplets), quantity (a single specimen, a pair, a small bunch), and any notable features.
+2.  **Composition and Framing:** Describe the arrangement of the subject within the frame. Is it centered, off-to-the-side (rule of thirds)? Is it a close-up macro shot, a top-down flat lay, or an angled view?
+3.  **Color Palette:** Describe the dominant colors and their interplay. Mention the vibrancy of the subject's colors in contrast to the background tones (e.g., "deep crimson of the cherries pops against a muted, dark slate background").
+4.  **Lighting and Shadows:** Characterize the lighting with detail. Is it soft, diffused light creating gentle shadows, or dramatic, hard light casting sharp, defined shadows? Note any highlights that suggest texture (e.g., a gleam on a wet apple).
+5.  **Background and Texture:** Describe the setting and surfaces. What is the texture of the background? (e.g., polished white marble, rustic weathered wood, soft fabric). Are there any secondary elements like leaves, utensils, or water droplets?
+6.  **Overall Mood and Atmosphere:** Synthesize all the visual cues to convey the overall feeling of the image. Is it minimalist and clean, warm and rustic, vibrant and energetic, or sophisticated and dramatic?
+
+Combine these observations into a fluent, natural-sounding sentence or two that paints a vivid picture for the user.
 `;
 
     const imagePart = {

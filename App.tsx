@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality, TextureEffect, SubjectType } from './types';
-import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, VEGETABLE_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS, TEXTURE_OPTIONS } from './constants';
+import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, VEGETABLE_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS, TEXTURE_OPTIONS, SANDWICH_VARIETY_OPTIONS } from './constants';
 // FIX: Removed ApiKeyError and initializeAi as they are no longer needed. The service now initializes the AI client directly.
 import { transformImage, upscaleImage, generateImageFromScratch, generateAltText, translateText } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
@@ -21,6 +21,7 @@ interface SavedSettings {
     subjectType: SubjectType;
     fruitVariety: string;
     vegetableVariety: string;
+    sandwichVariety: string;
     aspectRatio: AspectRatio;
     backgroundPrompt: string;
     isTransparent: boolean;
@@ -43,6 +44,7 @@ const App: React.FC = () => {
     const [subjectType, setSubjectType] = useState<SubjectType>(SubjectType.Fruit);
     const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].value);
     const [vegetableVariety, setVegetableVariety] = useState<string>(VEGETABLE_VARIETY_OPTIONS[0].value);
+    const [sandwichVariety, setSandwichVariety] = useState<string>(SANDWICH_VARIETY_OPTIONS[0].value);
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Square);
     const [previewAspectRatio, setPreviewAspectRatio] = useState<AspectRatio | null>(null);
     const [backgroundPrompt, setBackgroundPrompt] = useState<string>(BACKGROUND_GALLERY_OPTIONS[0].prompt);
@@ -96,6 +98,7 @@ const App: React.FC = () => {
                 setSubjectType(savedSettings.subjectType || SubjectType.Fruit);
                 setFruitVariety(savedSettings.fruitVariety);
                 setVegetableVariety(savedSettings.vegetableVariety || VEGETABLE_VARIETY_OPTIONS[0].value);
+                setSandwichVariety(savedSettings.sandwichVariety || SANDWICH_VARIETY_OPTIONS[0].value);
                 setAspectRatio(savedSettings.aspectRatio);
                 setBackgroundPrompt(savedSettings.backgroundPrompt);
                 setIsTransparent(savedSettings.isTransparent);
@@ -123,6 +126,7 @@ const App: React.FC = () => {
             subjectType,
             fruitVariety,
             vegetableVariety,
+            sandwichVariety,
             aspectRatio,
             backgroundPrompt,
             isTransparent,
@@ -139,6 +143,7 @@ const App: React.FC = () => {
         setSubjectType(preset.subjectType);
         setFruitVariety(preset.fruitVariety);
         setVegetableVariety(preset.vegetableVariety);
+        setSandwichVariety(preset.sandwichVariety);
         setBackgroundPrompt(preset.backgroundPrompt);
         setIsTransparent(false); // Presets have backgrounds
     };
@@ -189,7 +194,21 @@ const App: React.FC = () => {
         resetFinalTouches();
 
         try {
-            const activeVariety = subjectType === SubjectType.Fruit ? fruitVariety : vegetableVariety;
+            let activeVariety: string;
+            switch(subjectType) {
+                case SubjectType.Fruit:
+                    activeVariety = fruitVariety;
+                    break;
+                case SubjectType.Vegetable:
+                    activeVariety = vegetableVariety;
+                    break;
+                case SubjectType.Sandwich:
+                    activeVariety = sandwichVariety;
+                    break;
+                default:
+                    activeVariety = fruitVariety;
+            }
+            
             const result = await generateImageFromScratch({
                 lighting,
                 cameraAngle,
@@ -213,7 +232,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, subjectType]);
+    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, subjectType]);
 
 
     const handleTransform = useCallback(async () => {
@@ -234,7 +253,20 @@ const App: React.FC = () => {
             if (!base64Data) {
                 throw new Error("Invalid base64 image data.");
             }
-            const activeVariety = subjectType === SubjectType.Fruit ? fruitVariety : vegetableVariety;
+            let activeVariety: string;
+            switch(subjectType) {
+                case SubjectType.Fruit:
+                    activeVariety = fruitVariety;
+                    break;
+                case SubjectType.Vegetable:
+                    activeVariety = vegetableVariety;
+                    break;
+                case SubjectType.Sandwich:
+                    activeVariety = sandwichVariety;
+                    break;
+                default:
+                    activeVariety = fruitVariety;
+            }
             const result = await transformImage({
                 imageData: base64Data,
                 mimeType: originalImageMime,
@@ -260,7 +292,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, subjectType]);
+    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, subjectType]);
 
     const handleEnhance = useCallback(async () => {
         if (!generatedImage) {
@@ -521,10 +553,18 @@ const App: React.FC = () => {
                                 >
                                     خضروات
                                 </button>
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.Sandwich)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.Sandwich ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    ساندويتش
+                                </button>
                             </div>
                         </div>
 
-                        {/* Fruit/Vegetable Variety */}
+                        {/* Fruit/Vegetable/Sandwich Variety */}
                         {subjectType === SubjectType.Fruit ? (
                             <div>
                                 <label htmlFor="fruitVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفاكهة</label>
@@ -532,11 +572,18 @@ const App: React.FC = () => {
                                     {FRUIT_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             </div>
-                        ) : (
+                        ) : subjectType === SubjectType.Vegetable ? (
                             <div>
                                 <label htmlFor="vegetableVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الخضروات</label>
                                 <select id="vegetableVariety" value={vegetableVariety} onChange={(e) => setVegetableVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                                     {VEGETABLE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        ) : (
+                             <div>
+                                <label htmlFor="sandwichVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الساندويتش</label>
+                                <select id="sandwichVariety" value={sandwichVariety} onChange={(e) => setSandwichVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {SANDWICH_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             </div>
                         )}
