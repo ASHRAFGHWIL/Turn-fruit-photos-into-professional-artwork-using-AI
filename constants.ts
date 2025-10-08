@@ -79,6 +79,11 @@ export const FRUIT_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'Mediterranean Lemon', label: 'ليمون متوسطي' },
     { value: 'Italian Fig', label: 'تين إيطالي' },
     { value: 'Spanish Olives', label: 'زيتون إسباني' },
+    { value: 'Italian Blood Orange', label: 'برتقال دم الزغلول (إيطاليا)' },
+    { value: 'French Agen Prune', label: 'برقوق أجين (فرنسا)' },
+    { value: 'Greek Kalamata Olives', label: 'زيتون كالاماتا (اليونان)' },
+    { value: 'Portuguese Rocha Pear', label: 'كمثرى روشا (البرتغال)' },
+    { value: 'Spanish Persimmon', label: 'كاكي (إسبانيا)' },
 ];
 
 export const VEGETABLE_VARIETY_OPTIONS: Option<string>[] = [
@@ -102,6 +107,13 @@ export const VEGETABLE_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'New England Pumpkin', label: 'يقطين نيو إنجلاند' },
     { value: 'Michigan Asparagus', label: 'هليون ميشيغان' },
     { value: 'North Carolina Sweet Potato', label: 'بطاطا حلوة (كارولاينا الشمالية)' },
+    // European Varieties
+    { value: 'San Marzano Tomato', label: 'طماطم سان مارزانو (إيطاليا)' },
+    { value: 'Belgian Endive', label: 'الهندباء البلجيكية' },
+    { value: 'Tuscan Kale (Cavolo Nero)', label: 'كيل توسكاني (كافولو نيرو)' },
+    { value: 'French Leek', label: 'الكراث الفرنسي' },
+    { value: 'Italian Fennel', label: 'الشمر الإيطالي' },
+    { value: 'Romanesco Broccoli', label: 'بروكلي رومانسكي' },
 ];
 
 
