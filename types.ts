@@ -63,6 +63,9 @@ export enum SubjectType {
     Fruit = 'fruit',
     Vegetable = 'vegetable',
     Sandwich = 'sandwich',
+    Juice = 'juice',
+    Pie = 'pie',
+    BakedGoods = 'baked_goods',
 }
 
 export interface Option<T> {
@@ -85,6 +88,9 @@ export interface Preset {
     fruitVariety: string;
     vegetableVariety: string;
     sandwichVariety: string;
+    juiceVariety: string;
+    pieVariety: string;
+    bakedGoodsVariety: string;
     backgroundPrompt: string;
 }
 

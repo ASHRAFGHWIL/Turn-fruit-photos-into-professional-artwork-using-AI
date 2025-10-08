@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality, TextureEffect, SubjectType } from './types';
-import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, VEGETABLE_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS, TEXTURE_OPTIONS, SANDWICH_VARIETY_OPTIONS } from './constants';
+import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, VEGETABLE_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS, TEXTURE_OPTIONS, SANDWICH_VARIETY_OPTIONS, JUICE_VARIETY_OPTIONS, PIE_VARIETY_OPTIONS, BAKED_GOODS_VARIETY_OPTIONS } from './constants';
 // FIX: Removed ApiKeyError and initializeAi as they are no longer needed. The service now initializes the AI client directly.
 import { transformImage, upscaleImage, generateImageFromScratch, generateAltText, translateText } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
@@ -22,6 +22,9 @@ interface SavedSettings {
     fruitVariety: string;
     vegetableVariety: string;
     sandwichVariety: string;
+    juiceVariety: string;
+    pieVariety: string;
+    bakedGoodsVariety: string;
     aspectRatio: AspectRatio;
     backgroundPrompt: string;
     isTransparent: boolean;
@@ -45,6 +48,9 @@ const App: React.FC = () => {
     const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].value);
     const [vegetableVariety, setVegetableVariety] = useState<string>(VEGETABLE_VARIETY_OPTIONS[0].value);
     const [sandwichVariety, setSandwichVariety] = useState<string>(SANDWICH_VARIETY_OPTIONS[0].value);
+    const [juiceVariety, setJuiceVariety] = useState<string>(JUICE_VARIETY_OPTIONS[0].value);
+    const [pieVariety, setPieVariety] = useState<string>(PIE_VARIETY_OPTIONS[0].value);
+    const [bakedGoodsVariety, setBakedGoodsVariety] = useState<string>(BAKED_GOODS_VARIETY_OPTIONS[0].value);
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Square);
     const [previewAspectRatio, setPreviewAspectRatio] = useState<AspectRatio | null>(null);
     const [backgroundPrompt, setBackgroundPrompt] = useState<string>(BACKGROUND_GALLERY_OPTIONS[0].prompt);
@@ -99,6 +105,9 @@ const App: React.FC = () => {
                 setFruitVariety(savedSettings.fruitVariety);
                 setVegetableVariety(savedSettings.vegetableVariety || VEGETABLE_VARIETY_OPTIONS[0].value);
                 setSandwichVariety(savedSettings.sandwichVariety || SANDWICH_VARIETY_OPTIONS[0].value);
+                setJuiceVariety(savedSettings.juiceVariety || JUICE_VARIETY_OPTIONS[0].value);
+                setPieVariety(savedSettings.pieVariety || PIE_VARIETY_OPTIONS[0].value);
+                setBakedGoodsVariety(savedSettings.bakedGoodsVariety || BAKED_GOODS_VARIETY_OPTIONS[0].value);
                 setAspectRatio(savedSettings.aspectRatio);
                 setBackgroundPrompt(savedSettings.backgroundPrompt);
                 setIsTransparent(savedSettings.isTransparent);
@@ -127,6 +136,9 @@ const App: React.FC = () => {
             fruitVariety,
             vegetableVariety,
             sandwichVariety,
+            juiceVariety,
+            pieVariety,
+            bakedGoodsVariety,
             aspectRatio,
             backgroundPrompt,
             isTransparent,
@@ -144,6 +156,9 @@ const App: React.FC = () => {
         setFruitVariety(preset.fruitVariety);
         setVegetableVariety(preset.vegetableVariety);
         setSandwichVariety(preset.sandwichVariety);
+        setJuiceVariety(preset.juiceVariety);
+        setPieVariety(preset.pieVariety);
+        setBakedGoodsVariety(preset.bakedGoodsVariety);
         setBackgroundPrompt(preset.backgroundPrompt);
         setIsTransparent(false); // Presets have backgrounds
     };
@@ -205,6 +220,15 @@ const App: React.FC = () => {
                 case SubjectType.Sandwich:
                     activeVariety = sandwichVariety;
                     break;
+                case SubjectType.Juice:
+                    activeVariety = juiceVariety;
+                    break;
+                case SubjectType.Pie:
+                    activeVariety = pieVariety;
+                    break;
+                case SubjectType.BakedGoods:
+                    activeVariety = bakedGoodsVariety;
+                    break;
                 default:
                     activeVariety = fruitVariety;
             }
@@ -232,7 +256,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, subjectType]);
+    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, juiceVariety, pieVariety, bakedGoodsVariety, subjectType]);
 
 
     const handleTransform = useCallback(async () => {
@@ -264,6 +288,15 @@ const App: React.FC = () => {
                 case SubjectType.Sandwich:
                     activeVariety = sandwichVariety;
                     break;
+                case SubjectType.Juice:
+                    activeVariety = juiceVariety;
+                    break;
+                case SubjectType.Pie:
+                    activeVariety = pieVariety;
+                    break;
+                case SubjectType.BakedGoods:
+                    activeVariety = bakedGoodsVariety;
+                    break;
                 default:
                     activeVariety = fruitVariety;
             }
@@ -292,7 +325,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, subjectType]);
+    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, sandwichVariety, juiceVariety, pieVariety, bakedGoodsVariety, subjectType]);
 
     const handleEnhance = useCallback(async () => {
         if (!generatedImage) {
@@ -473,7 +506,7 @@ const App: React.FC = () => {
                     استوديو غويل
                 </h1>
                 <p className="text-lg text-gray-400 mt-2">
-                    حوّل صور الفواكه والخضروات إلى أعمال فنية احترافية باستخدام الذكاء الاصطناعي
+                    حوّل صور منتجاتك إلى أعمال فنية احترافية باستخدام الذكاء الاصطناعي
                 </p>
             </header>
 
@@ -536,7 +569,7 @@ const App: React.FC = () => {
                         {/* Subject Type */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">نوع العنصر</label>
-                            <div className="flex justify-between items-center gap-2">
+                            <div className="grid grid-cols-3 gap-2">
                                 <button
                                     onClick={() => setSubjectType(SubjectType.Fruit)}
                                     className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
@@ -561,29 +594,79 @@ const App: React.FC = () => {
                                 >
                                     ساندويتش
                                 </button>
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.Juice)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.Juice ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    عصير
+                                </button>
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.Pie)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.Pie ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    فطيرة
+                                </button>
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.BakedGoods)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.BakedGoods ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    مخبوزات
+                                </button>
                             </div>
                         </div>
 
-                        {/* Fruit/Vegetable/Sandwich Variety */}
-                        {subjectType === SubjectType.Fruit ? (
+                        {/* Fruit/Vegetable/Sandwich/Juice/Pie/BakedGoods Variety */}
+                        {subjectType === SubjectType.Fruit && (
                             <div>
                                 <label htmlFor="fruitVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفاكهة</label>
                                 <select id="fruitVariety" value={fruitVariety} onChange={(e) => setFruitVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                                     {FRUIT_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             </div>
-                        ) : subjectType === SubjectType.Vegetable ? (
+                        )}
+                        {subjectType === SubjectType.Vegetable && (
                             <div>
                                 <label htmlFor="vegetableVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الخضروات</label>
                                 <select id="vegetableVariety" value={vegetableVariety} onChange={(e) => setVegetableVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                                     {VEGETABLE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             </div>
-                        ) : (
+                        )}
+                        {subjectType === SubjectType.Sandwich && (
                              <div>
                                 <label htmlFor="sandwichVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الساندويتش</label>
                                 <select id="sandwichVariety" value={sandwichVariety} onChange={(e) => setSandwichVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
                                     {SANDWICH_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        )}
+                        {subjectType === SubjectType.Juice && (
+                             <div>
+                                <label htmlFor="juiceVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع العصير</label>
+                                <select id="juiceVariety" value={juiceVariety} onChange={(e) => setJuiceVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {JUICE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        )}
+                        {subjectType === SubjectType.Pie && (
+                             <div>
+                                <label htmlFor="pieVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفطيرة</label>
+                                <select id="pieVariety" value={pieVariety} onChange={(e) => setPieVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {PIE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        )}
+                         {subjectType === SubjectType.BakedGoods && (
+                             <div>
+                                <label htmlFor="bakedGoodsVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع المخبوزات</label>
+                                <select id="bakedGoodsVariety" value={bakedGoodsVariety} onChange={(e) => setBakedGoodsVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {BAKED_GOODS_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                                 </select>
                             </div>
                         )}
