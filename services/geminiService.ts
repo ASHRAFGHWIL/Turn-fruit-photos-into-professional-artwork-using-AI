@@ -1,4 +1,3 @@
-
 import { GoogleGenAI, Modality } from '@google/genai';
 import { TransformImageParams } from '../types';
 
@@ -62,10 +61,32 @@ export async function transformImage(params: TransformImageParams): Promise<stri
             }
         }
         
-        throw new Error('No image was generated. The AI may have returned text instead.');
+        throw new Error('لم يتم إنشاء صورة. قد يكون الذكاء الاصطناعي أعاد نصًا بدلاً من ذلك.');
 
-    } catch (error) {
+    } catch (error: any) {
         console.error("Gemini API Error:", error);
+
+        // Passthrough for our specific application-level error
+        if (error?.message?.includes('لم يتم إنشاء صورة')) {
+             throw error;
+        }
+
+        const errorMessage = (error?.message || '').toLowerCase();
+
+        if (errorMessage.includes('api key not valid') || errorMessage.includes('permission denied')) {
+            throw new Error('مفتاح API غير صالح أو لا يملك الإذن اللازم. يرجى مراجعة إعداداتك.');
+        }
+        if (errorMessage.includes('resource exhausted') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
+            throw new Error('لقد تجاوزت حد الطلبات المسموح به. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.');
+        }
+        if (errorMessage.includes('invalid argument') || (errorMessage.includes('invalid') && (errorMessage.includes('image') || errorMessage.includes('data')))) {
+             throw new Error('الصورة المقدمة غير صالحة، أو أن أحد المدخلات غير صحيح. يرجى التحقق من الصورة والمحاولة مرة أخرى.');
+        }
+        if (errorMessage.includes('internal') || errorMessage.includes('unavailable') || errorMessage.includes('server error')) {
+            throw new Error('حدث خطأ في خادم الذكاء الاصطناعي. يرجى المحاولة مرة أخرى لاحقًا.');
+        }
+        
+        // Default error if no specific cases match
         throw new Error('فشل الاتصال بخدمة الذكاء الاصطناعي. الرجاء المحاولة مرة أخرى.');
     }
 }

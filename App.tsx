@@ -1,4 +1,3 @@
-
 import React, { useState, useCallback } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { CameraAngle, LightingType, AspectRatio } from './types';
@@ -7,10 +6,15 @@ import { transformImage } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
 import { DownloadIcon } from './components/icons';
 
+interface GeneratedImageData {
+    url: string;
+    filename: string;
+}
+
 const App: React.FC = () => {
     const [originalImage, setOriginalImage] = useState<string | null>(null);
     const [originalImageMime, setOriginalImageMime] = useState<string>('');
-    const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+    const [generatedImage, setGeneratedImage] = useState<GeneratedImageData | null>(null);
 
     const [lighting, setLighting] = useState<LightingType>(LightingType.Studio);
     const [cameraAngle, setCameraAngle] = useState<CameraAngle>(CameraAngle.FrontView);
@@ -59,7 +63,13 @@ const App: React.FC = () => {
                 backgroundPrompt: isTransparent ? 'transparent' : backgroundPrompt,
                 isTransparent,
             });
-            setGeneratedImage(`data:image/png;base64,${result}`);
+            
+            const filename = `ghwil-studio-${Date.now()}.png`;
+            setGeneratedImage({
+                url: `data:image/png;base64,${result}`,
+                filename: filename
+            });
+
         } catch (err) {
             console.error(err);
             setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء تحويل الصورة.');
@@ -128,15 +138,15 @@ const App: React.FC = () => {
                 <div className="lg:col-span-2">
                     <ImageWorkspace
                         originalImage={originalImage}
-                        generatedImage={generatedImage}
+                        generatedImage={generatedImage?.url ?? null}
                         isLoading={isLoading}
                         error={error}
                         onImageUpload={handleImageUpload}
                     />
-                     {generatedImage && !isLoading && (
+                     {generatedImage && !isLoading && !error && (
                         <a
-                            href={generatedImage}
-                            download="ghwil-studio-image.png"
+                            href={generatedImage.url}
+                            download={generatedImage.filename}
                             className="mt-4 w-full flex justify-center items-center gap-2 bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-green-700 transform hover:-translate-y-0.5 transition-all duration-300"
                         >
                             <DownloadIcon />

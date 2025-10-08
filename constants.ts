@@ -1,4 +1,3 @@
-
 import { LightingType, CameraAngle, AspectRatio, Option } from './types';
 
 export const LIGHTING_OPTIONS: Option<LightingType>[] = [
@@ -11,9 +10,9 @@ export const LIGHTING_OPTIONS: Option<LightingType>[] = [
 ];
 
 export const CAMERA_ANGLE_OPTIONS: Option<CameraAngle>[] = [
-    { value: CameraAngle.FrontView, label: 'มุมมองด้านหน้า' },
-    { value: CameraAngle.SideView, label: 'มุมมองด้านข้าง' },
-    { value: CameraAngle.TopView, label: 'มุมมองด้านบน' },
+    { value: CameraAngle.FrontView, label: 'منظر أمامي' },
+    { value: CameraAngle.SideView, label: 'منظر جانبي' },
+    { value: CameraAngle.TopView, label: 'منظر علوي' },
     { value: CameraAngle.Angle45, label: 'زاوية 45 درجة' },
     { value: CameraAngle.CloseUp, label: 'لقطة قريبة' },
     { value: CameraAngle.WideShot, label: 'لقطة واسعة' },
