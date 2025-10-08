@@ -1,11 +1,14 @@
+
 import { GoogleGenAI, Modality } from '@google/genai';
+// FIX: Correctly import types from the dedicated types file.
 import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams, OutputQuality, GenerateAltTextParams, TranslateTextParams } from '../types';
 
-if (!process.env.API_KEY) {
-    throw new Error("API_KEY environment variable not set");
-}
+// FIX: Initialize the GoogleGenAI client directly using the environment variable, as per guidelines.
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// FIX: Removed ApiKeyError class as it's no longer needed.
+// FIX: Removed initializeAi function. Initialization is now done at the module level.
+
 
 function constructTransformPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeType'>): string {
     const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
@@ -31,6 +34,7 @@ Ensure the final image looks highly natural, with realistic textures and details
 }
 
 async function callGeminiForImageEdit(model: string, parts: any[]): Promise<string> {
+    // FIX: Removed check for `ai` instance, as it's guaranteed to be initialized.
     try {
         const response = await ai.models.generateContent({
             model: model,
@@ -50,15 +54,11 @@ async function callGeminiForImageEdit(model: string, parts: any[]): Promise<stri
 
     } catch (error: any) {
         console.error("Gemini API Error:", error);
-
-        if (error?.message?.includes('لم يتم إنشاء صورة')) {
-             throw error;
-        }
-
         const errorMessage = (error?.message || '').toLowerCase();
 
-        if (errorMessage.includes('api key not valid') || errorMessage.includes('permission denied')) {
-            throw new Error('مفتاح API غير صالح أو لا يملك الإذن اللازم. يرجى مراجعة إعداداتك.');
+        // FIX: Removed API key specific error handling as we assume the key is valid.
+        if (error?.message?.includes('لم يتم إنشاء صورة')) {
+             throw error;
         }
         if (errorMessage.includes('resource exhausted') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
             throw new Error('لقد تجاوزت حد الطلبات المسموح به. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.');
@@ -151,6 +151,7 @@ Do not include any text, watermarks, or borders. The focus should be solely on t
 }
 
 export async function generateImageFromScratch(params: GenerateImageParams): Promise<string> {
+    // FIX: Removed check for `ai` instance.
     const prompt = constructGenerationPrompt(params);
 
     try {
@@ -173,9 +174,7 @@ export async function generateImageFromScratch(params: GenerateImageParams): Pro
     } catch (error: any) {
         console.error("Gemini API Error (Image Generation):", error);
         const errorMessage = (error?.message || '').toLowerCase();
-        if (errorMessage.includes('api key not valid') || errorMessage.includes('permission denied')) {
-            throw new Error('مفتاح API غير صالح أو لا يملك الإذن اللازم. يرجى مراجعة إعداداتك.');
-        }
+        // FIX: Removed API key specific error handling.
         if (errorMessage.includes('resource exhausted') || errorMessage.includes('rate limit') || errorMessage.includes('quota')) {
             throw new Error('لقد تجاوزت حد الطلبات المسموح به. يرجى الانتظار قليلاً ثم المحاولة مرة أخرى.');
         }
@@ -188,6 +187,7 @@ export async function generateImageFromScratch(params: GenerateImageParams): Pro
 
 
 export async function generateAltText(params: GenerateAltTextParams): Promise<string> {
+    // FIX: Removed check for `ai` instance.
     const { imageData, mimeType } = params;
 
     const prompt = `
@@ -222,11 +222,13 @@ Combine these points into a fluent, natural-sounding sentence or two.
         return response.text;
     } catch (error: any) {
         console.error("Gemini API Error (Alt Text Generation):", error);
+        // FIX: Removed API key specific error handling.
         throw new Error('فشل إنشاء الوصف التعريفي. يرجى المحاولة مرة أخرى.');
     }
 }
 
 export async function translateText(params: TranslateTextParams): Promise<string> {
+    // FIX: Removed check for `ai` instance.
     const { text, targetLanguage } = params;
     const prompt = `
 You are an expert translator specializing in technical and descriptive content for the web.
@@ -246,6 +248,7 @@ Arabic Text: "${text}"
         return response.text;
     } catch (error: any) {
         console.error("Gemini API Error (Translation):", error);
+        // FIX: Removed API key specific error handling.
         throw new Error('فشلت عملية الترجمة. يرجى المحاولة مرة أخرى.');
     }
 }

@@ -2,10 +2,12 @@ import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
 import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality } from './types';
 import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS } from './constants';
+// FIX: Removed ApiKeyError and initializeAi as they are no longer needed. The service now initializes the AI client directly.
 import { transformImage, upscaleImage, generateImageFromScratch, generateAltText, translateText } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
 import BackgroundSelector from './components/BackgroundSelector';
 import ColorAdjustmentsPanel from './components/ColorAdjustments';
+// FIX: Removed KeyIcon and CheckCircleIcon as the API key UI is removed.
 import { DownloadIcon, SwitchImageIcon, UpscaleIcon, SaveIcon, LoadIcon, CopyIcon, SparklesIcon, TranslateIcon } from './components/icons';
 
 interface GeneratedImageData {
@@ -52,6 +54,11 @@ const App: React.FC = () => {
     const [saveMessage, setSaveMessage] = useState<string>('');
     const [hasSavedSettings, setHasSavedSettings] = useState<boolean>(false);
 
+    // FIX: Removed API key related state as it's now handled by environment variables.
+    // const [apiKeyInput, setApiKeyInput] = useState<string>('');
+    // const [isKeySet, setIsKeySet] = useState<boolean>(false);
+    // const [apiKeyError, setApiKeyError] = useState<string | null>(null);
+
     const [altText, setAltText] = useState<string>('');
     const [translatedAltText, setTranslatedAltText] = useState<string>('');
     const [isGeneratingAltText, setIsGeneratingAltText] = useState<boolean>(false);
@@ -60,6 +67,10 @@ const App: React.FC = () => {
     const [copyButtonTextEN, setCopyButtonTextEN] = useState<string>('نسخ EN');
     
     const SETTINGS_KEY = 'ghwilStudioSettings';
+    // FIX: Removed API key storage key.
+    // const API_KEY_STORAGE_KEY = 'ghwilStudioApiKey';
+    
+    // FIX: Removed useEffect for loading API key from local storage.
     
     const colorFilterStyle = useMemo(() => {
         return {
@@ -92,7 +103,9 @@ const App: React.FC = () => {
             loadSettings();
         }
     }, [loadSettings]);
-
+    
+    // FIX: Removed handleApiKeySave function.
+    
     const handleSaveSettings = () => {
         const settings: SavedSettings = {
             lighting,
@@ -133,7 +146,6 @@ const App: React.FC = () => {
         reader.onerror = () => {
             setError('فشل في قراءة ملف الصورة.');
         };
-        // FIX: Corrected typo from readDataURL to readAsDataURL.
         reader.readAsDataURL(file);
     };
     
@@ -152,7 +164,8 @@ const App: React.FC = () => {
         setLoadingAction('generate');
         setGeneratedImage(null);
         setError(null);
-        setOriginalImage(null); // Clear any existing original image
+        // FIX: Removed API key error reset.
+        setOriginalImage(null);
         setOriginalImageMime('');
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
@@ -175,6 +188,7 @@ const App: React.FC = () => {
             });
 
         } catch (err) {
+            // FIX: Simplified error handling, removed ApiKeyError check.
             console.error(err);
             setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء توليد الصورة.');
         } finally {
@@ -194,6 +208,7 @@ const App: React.FC = () => {
         setLoadingAction('transform');
         setGeneratedImage(null);
         setError(null);
+        // FIX: Removed API key error reset.
         setActiveFilter(ImageFilter.None);
         setColorAdjustments(initialColorAdjustments);
         resetAltText();
@@ -221,6 +236,7 @@ const App: React.FC = () => {
             });
 
         } catch (err) {
+            // FIX: Simplified error handling, removed ApiKeyError check.
             console.error(err);
             setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء تحويل الصورة.');
         } finally {
@@ -237,6 +253,7 @@ const App: React.FC = () => {
 
         setIsEnhancing(true);
         setError(null);
+        // FIX: Removed API key error reset.
 
         try {
             const base64Data = generatedImage.url.split(',')[1];
@@ -255,11 +272,12 @@ const App: React.FC = () => {
                 url: `data:image/png;base64,${result}`,
                 filename: filename
             });
-            setActiveFilter(ImageFilter.None); // Reset filter as it's now baked into the image
-            setColorAdjustments(initialColorAdjustments); // Reset color adjustments for the new base image
+            setActiveFilter(ImageFilter.None); 
+            setColorAdjustments(initialColorAdjustments);
             resetAltText();
 
         } catch (err) {
+            // FIX: Simplified error handling, removed ApiKeyError check.
             console.error(err);
             setError(err instanceof Error ? err.message : 'حدث خطأ غير متوقع أثناء تحسين الصورة.');
         } finally {
@@ -270,13 +288,15 @@ const App: React.FC = () => {
     const handleGenerateAltText = useCallback(async () => {
         if (!generatedImage) return;
         setIsGeneratingAltText(true);
-        setTranslatedAltText(''); // Clear previous translation
+        setTranslatedAltText('');
         setError(null);
+        // FIX: Removed API key error reset.
         try {
             const base64Data = generatedImage.url.split(',')[1];
             const generatedText = await generateAltText({ imageData: base64Data, mimeType: 'image/png' });
             setAltText(generatedText);
         } catch (err) {
+            // FIX: Simplified error handling, removed ApiKeyError check.
             setAltText(`فشل توليد الوصف: ${err instanceof Error ? err.message : 'خطأ غير معروف'}`);
         } finally {
             setIsGeneratingAltText(false);
@@ -286,10 +306,12 @@ const App: React.FC = () => {
     const handleTranslateAltText = useCallback(async () => {
         if (!altText || isTranslating) return;
         setIsTranslating(true);
+        // FIX: Removed API key error reset.
         try {
             const translated = await translateText({ text: altText, targetLanguage: 'English' });
             setTranslatedAltText(translated);
         } catch (err) {
+            // FIX: Simplified error handling, removed ApiKeyError check.
             setTranslatedAltText(`Translation failed: ${err instanceof Error ? err.message : 'Unknown error'}`);
         } finally {
             setIsTranslating(false);
@@ -318,7 +340,7 @@ const App: React.FC = () => {
 
     const handleDownloadWithFilters = () => {
         if (!generatedImage) return;
-
+    
         const image = new Image();
         image.crossOrigin = 'anonymous'; 
         image.onload = () => {
@@ -327,17 +349,39 @@ const App: React.FC = () => {
             canvas.height = image.naturalHeight;
             const ctx = canvas.getContext('2d');
             if (!ctx) return;
-
-            const filterString = `
+    
+            let artisticFilterString = '';
+            switch (activeFilter) {
+                case ImageFilter.Sepia: 
+                    artisticFilterString = 'sepia(1)'; 
+                    break;
+                case ImageFilter.Grayscale: 
+                    artisticFilterString = 'grayscale(1)'; 
+                    break;
+                case ImageFilter.Invert: 
+                    artisticFilterString = 'invert(1)'; 
+                    break;
+                case ImageFilter.Vintage: 
+                    artisticFilterString = 'sepia(0.6) contrast(1.1) brightness(0.9) saturate(1.2)'; 
+                    break;
+                case ImageFilter.Glow: 
+                    artisticFilterString = 'brightness(1.1) contrast(1.1) saturate(1.2) drop-shadow(0 0 5px rgba(255, 255, 200, 0.5))'; 
+                    break;
+                case ImageFilter.Sharpen: 
+                    artisticFilterString = 'contrast(1.4) brightness(0.95)'; 
+                    break;
+            }
+    
+            const colorAdjustmentsFilterString = `
                 brightness(${colorAdjustments.brightness / 100})
                 contrast(${colorAdjustments.contrast / 100})
                 saturate(${colorAdjustments.saturation / 100})
                 hue-rotate(${colorAdjustments.hue}deg)
             `;
-
-            ctx.filter = filterString.trim();
+    
+            ctx.filter = `${artisticFilterString} ${colorAdjustmentsFilterString}`.trim();
             ctx.drawImage(image, 0, 0);
-
+    
             const link = document.createElement('a');
             link.download = generatedImage.filename.replace('.png', '-adjusted.png');
             link.href = canvas.toDataURL('image/png');
@@ -371,6 +415,9 @@ const App: React.FC = () => {
             <main className="w-full max-w-7xl grid grid-cols-1 lg:grid-cols-3 gap-8">
                 <aside className="lg:col-span-1 bg-gray-800/50 rounded-2xl p-6 shadow-lg border border-gray-700">
                     <h2 className="text-2xl font-bold mb-6 border-b-2 border-purple-500 pb-2">لوحة التحكم</h2>
+                    
+                    {/* FIX: Removed API key input section to comply with guidelines. */}
+
                     <div className="space-y-6">
 
                         {/* Presets Section */}
@@ -452,16 +499,21 @@ const App: React.FC = () => {
                              <p className="text-center text-sm text-gray-400 pb-2">اختر طريقة الإنشاء</p>
                              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                                  <button 
-                                     onClick={handleGenerateFromScratch} 
+                                     onClick={handleGenerateFromScratch}
+                                     // FIX: Removed !isKeySet from disabled check.
                                      disabled={isLoading || isEnhancing} 
                                      className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-teal-500 to-cyan-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                     // FIX: Removed title related to API key.
                                  >
                                      {(isLoading && loadingAction === 'generate') ? 'جاري التوليد...' : 'توليد صورة جديدة'}
                                  </button>
                                  <button 
-                                     onClick={handleTransform} 
+                                     onClick={handleTransform}
+                                     // FIX: Removed !isKeySet from disabled check.
                                      disabled={isLoading || isEnhancing || !originalImage} 
                                      className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-purple-600 to-pink-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                     // FIX: Removed title related to API key.
+                                     title={!originalImage ? "الرجاء رفع صورة أولاً" : ""}
                                  >
                                      {(isLoading && loadingAction === 'transform') ? 'جاري التحويل...' : 'تحويل صورتك'}
                                  </button>
@@ -516,16 +568,25 @@ const App: React.FC = () => {
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
                                 {/* Artistic Filters */}
                                 <div>
-                                    <label htmlFor="filter" className="block text-base font-medium text-gray-300 mb-3">1. تطبيق فلتر فني (معاينة)</label>
-                                     <select 
-                                        id="filter" 
-                                        value={activeFilter} 
-                                        onChange={(e) => setActiveFilter(e.target.value as ImageFilter)} 
-                                        disabled={isEnhancing} 
-                                        className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500 disabled:opacity-50"
-                                    >
-                                        {FILTER_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                                    </select>
+                                    <label className="block text-base font-medium text-gray-300 mb-3">1. اختر فلترًا فنيًا (تأثير فوري)</label>
+                                    <div className="filter-carousel flex items-center gap-4 overflow-x-auto pb-4 pt-1 -mx-4 px-4">
+                                        {FILTER_OPTIONS.map(opt => (
+                                            <button
+                                                key={opt.value}
+                                                onClick={() => setActiveFilter(opt.value)}
+                                                disabled={isEnhancing}
+                                                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                                    ${activeFilter === opt.value
+                                                        ? 'bg-purple-600 text-white shadow-lg scale-110'
+                                                        : 'bg-gray-700 text-gray-300 opacity-70 hover:opacity-100 hover:scale-105 hover:bg-gray-600'
+                                                    }
+                                                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                                                `}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
                                 </div>
                                 {/* Color Adjustments */}
                                 <div>
@@ -555,8 +616,10 @@ const App: React.FC = () => {
                             <div className="pt-6 mt-6 border-t border-gray-700/50 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                <button
                                    onClick={handleEnhance}
+                                   // FIX: Removed !isKeySet from disabled check.
                                    disabled={isEnhancing}
                                    className="w-full flex justify-center items-center gap-2 bg-blue-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+                                   // FIX: Removed title related to API key.
                                >
                                    <UpscaleIcon />
                                    {isEnhancing ? 'جاري التحسين...' : enhanceButtonText}
@@ -620,16 +683,21 @@ const App: React.FC = () => {
                              <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-3">
                                  <button
                                      onClick={handleGenerateAltText}
+                                     // FIX: Removed !isKeySet from disabled check.
                                      disabled={isGeneratingAltText || isTranslating}
                                      className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                     // FIX: Removed title related to API key.
                                  >
                                      <SparklesIcon />
                                      {isGeneratingAltText ? 'جاري الإنشاء...' : 'إنشاء وصف (AR)'}
                                  </button>
                                   <button
                                      onClick={handleTranslateAltText}
+                                     // FIX: Removed !isKeySet from disabled check.
                                      disabled={!altText || isGeneratingAltText || isTranslating}
                                      className="w-full flex justify-center items-center gap-2 bg-gradient-to-r from-blue-500 to-indigo-500 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                                     // FIX: Removed title related to API key.
+                                     title={!altText ? "يجب إنشاء الوصف العربي أولاً" : ""}
                                  >
                                      <TranslateIcon />
                                      {isTranslating ? 'جاري الترجمة...' : 'ترجمة إلى (EN)'}
