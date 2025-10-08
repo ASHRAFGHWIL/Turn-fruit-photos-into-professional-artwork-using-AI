@@ -1,7 +1,7 @@
 
 import { GoogleGenAI, Modality } from '@google/genai';
 // FIX: Correctly import types from the dedicated types file.
-import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams, OutputQuality, GenerateAltTextParams, TranslateTextParams } from '../types';
+import { TransformImageParams, UpscaleImageParams, ImageFilter, GenerateImageParams, OutputQuality, GenerateAltTextParams, TranslateTextParams, TextureEffect } from '../types';
 
 // FIX: Initialize the GoogleGenAI client directly using the environment variable, as per guidelines.
 const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
@@ -11,17 +11,17 @@ const ai = new GoogleGenAI({ apiKey: process.env.API_KEY! });
 
 
 function constructTransformPrompt(params: Omit<TransformImageParams, 'imageData' | 'mimeType'>): string {
-    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
+    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, subjectVariety } = params;
 
     const backgroundInstruction = isTransparent
         ? `- Background: Remove the existing background and replace it with a fully transparent one.
 - Format: The final output MUST be a high-resolution PNG image with a transparent background.`
-        : `- Background: Place the fruit on a new background described as: '${backgroundPrompt}'.
+        : `- Background: Place the subject on a new background described as: '${backgroundPrompt}'.
 - Format: The final output should be a high-resolution, professional-looking image.`;
     
     return `
-You are an expert photo editor AI. Your task is to edit and enhance an image of fruit to create a professional, high-resolution, and photorealistic result.
-The main subject is a fruit, specifically '${fruitVariety}'. Generate a highly variable, high-resolution, and natural-looking image of this fruit variety.
+You are an expert photo editor AI. Your task is to edit and enhance an image to create a professional, high-resolution, and photorealistic result.
+The main subject is a '${subjectVariety}'. Generate a highly variable, high-resolution, and natural-looking image of this subject.
 Apply the following specific transformations creatively and avoid making a simple copy of the original. Innovate on the composition.
 
 - Lighting: Re-light the scene with a '${lighting}' style.
@@ -94,12 +94,16 @@ export async function transformImage(params: TransformImageParams): Promise<stri
 
 
 export async function upscaleImage(params: UpscaleImageParams): Promise<string> {
-    const { imageData, mimeType, filter, outputQuality } = params;
+    const { imageData, mimeType, filter, texture, outputQuality } = params;
 
     const filterInstruction = (filter && filter !== ImageFilter.None)
         ? `- Apply the following visual filter to the image: '${filter}'.`
         : '';
         
+    const textureInstruction = (texture && texture !== TextureEffect.None)
+        ? `- Apply a subtle, photorealistic '${texture}' texture effect to the entire image. This should be integrated naturally.`
+        : '';
+
     const qualityInstruction = outputQuality === OutputQuality.HighPrint
         ? `Your task is to take the provided image and upscale it to double its current pixel dimensions. The target is to achieve a resolution suitable for high-quality printing at 600 DPI.
 - Enhance details, sharpen edges, and remove any compression artifacts meticulously.
@@ -109,10 +113,11 @@ export async function upscaleImage(params: UpscaleImageParams): Promise<string> 
 - Ensure the result is a crisp, clean, high-resolution version of the original.`;
 
     const upscalePrompt = `
-You are an expert AI image upscaler.
+You are an expert AI image upscaler and editor.
 ${qualityInstruction}
 ${filterInstruction}
-- Do not add, remove, or change any other content, elements, or colors in the image, other than applying the requested filter.
+${textureInstruction}
+- Do not add, remove, or change any other content, elements, or colors in the image, other than applying the requested filter and/or texture.
 - The output MUST be a high-resolution PNG image.
 `;
 
@@ -129,14 +134,14 @@ ${filterInstruction}
 }
 
 function constructGenerationPrompt(params: GenerateImageParams): string {
-    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety } = params;
+    const { lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, subjectVariety } = params;
 
     const backgroundInstruction = isTransparent
         ? `The image must have a fully transparent background.`
-        : `The fruit should be placed on a background described as: '${backgroundPrompt}'.`;
+        : `The subject should be placed on a background described as: '${backgroundPrompt}'.`;
 
     return `
-Generate a single, highly creative, and professional photorealistic image of a '${fruitVariety}'.
+Generate a single, highly creative, and professional photorealistic image of a '${subjectVariety}'.
 The image should be crafted with high artistic skill and innovation.
 
 - **Style:** Photorealistic, high-resolution, with natural-looking textures and details.
@@ -146,7 +151,7 @@ The image should be crafted with high artistic skill and innovation.
 - **Background:** ${backgroundInstruction}
 - **Output Format:** The final image must be a high-resolution PNG.
 
-Do not include any text, watermarks, or borders. The focus should be solely on the fruit as the subject, presented in an artistic and professional manner.
+Do not include any text, watermarks, or borders. The focus should be solely on the subject, presented in an artistic and professional manner.
 `;
 }
 
@@ -195,7 +200,7 @@ Act as an expert in SEO and web accessibility.
 Your task is to generate a descriptive, professional, and concise alt-text for the following image.
 The description must be in Arabic and should not exceed 500 characters.
 Describe the following elements in the image:
-1.  **Main Subject:** Identify the fruit and its state (e.g., whole, sliced, fresh).
+1.  **Main Subject:** Identify the fruit or vegetable and its state (e.g., whole, sliced, fresh).
 2.  **Composition:** Briefly describe how the subject is arranged.
 3.  **Lighting:** Mention the style of lighting (e.g., soft studio light, warm natural light).
 4.  **Background:** Describe the background context.

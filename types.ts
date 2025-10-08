@@ -45,9 +45,22 @@ export enum ImageFilter {
     Cool = 'cool tone',
 }
 
+export enum TextureEffect {
+    None = 'none',
+    Rough = 'rough',
+    Smooth = 'smooth',
+    Grainy = 'grainy',
+    Canvas = 'canvas',
+}
+
 export enum OutputQuality {
     Standard = 'standard',
     HighPrint = 'high_print',
+}
+
+export enum SubjectType {
+    Fruit = 'fruit',
+    Vegetable = 'vegetable',
 }
 
 export interface Option<T> {
@@ -66,7 +79,9 @@ export interface Preset {
     label: string;
     lighting: LightingType;
     cameraAngle: CameraAngle;
+    subjectType: SubjectType;
     fruitVariety: string;
+    vegetableVariety: string;
     backgroundPrompt: string;
 }
 
@@ -89,13 +104,14 @@ export interface TransformImageParams {
     aspectRatio: AspectRatio;
     backgroundPrompt: string;
     isTransparent: boolean;
-    fruitVariety: string;
+    subjectVariety: string;
 }
 
 export interface UpscaleImageParams {
     imageData: string;
     mimeType: string;
     filter: ImageFilter;
+    texture: TextureEffect;
     outputQuality: OutputQuality;
 }
 
@@ -105,7 +121,7 @@ export interface GenerateImageParams {
     aspectRatio: AspectRatio;
     backgroundPrompt: string;
     isTransparent: boolean;
-    fruitVariety: string;
+    subjectVariety: string;
 }
 
 export interface GenerateAltTextParams {

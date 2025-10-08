@@ -1,4 +1,4 @@
-import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality } from './types';
+import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality, TextureEffect, SubjectType } from './types';
 
 export const LIGHTING_OPTIONS: Option<LightingType>[] = [
     { value: LightingType.Studio, label: 'إضاءة استوديو' },
@@ -42,6 +42,15 @@ export const FILTER_OPTIONS: Option<ImageFilter>[] = [
     { value: ImageFilter.Invert, label: 'عكس الألوان' },
 ];
 
+export const TEXTURE_OPTIONS: Option<TextureEffect>[] = [
+    { value: TextureEffect.None, label: 'بدون ملمس' },
+    { value: TextureEffect.Grainy, label: 'محبب' },
+    { value: TextureEffect.Canvas, label: 'قماشي' },
+    { value: TextureEffect.Rough, label: 'خشن' },
+    { value: TextureEffect.Smooth, label: 'ناعم' },
+];
+
+
 export const OUTPUT_QUALITY_OPTIONS: Option<OutputQuality>[] = [
     { value: OutputQuality.Standard, label: 'تحسين قياسي (للشاشة)' },
     { value: OutputQuality.HighPrint, label: 'تحسين للطباعة (600 DPI)' },
@@ -71,6 +80,30 @@ export const FRUIT_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'Italian Fig', label: 'تين إيطالي' },
     { value: 'Spanish Olives', label: 'زيتون إسباني' },
 ];
+
+export const VEGETABLE_VARIETY_OPTIONS: Option<string>[] = [
+    { value: 'any high-quality vegetable', label: 'خضار عام عالي الجودة' },
+    // Common Vegetables
+    { value: 'Red Tomato on the Vine', label: 'طماطم حمراء (عنقود)' },
+    { value: 'Carrot', label: 'جزر' },
+    { value: 'Cucumber', label: 'خيار' },
+    { value: 'Red Bell Pepper', label: 'فلفل أحمر' },
+    { value: 'Broccoli', label: 'بروكلي' },
+    { value: 'Eggplant', label: 'باذنجان' },
+    { value: 'Corn on the cob', label: 'ذرة' },
+    { value: 'Lettuce Head', label: 'خس' },
+    { value: 'Mushroom', label: 'فطر' },
+    { value: 'Potato', label: 'بطاطس' },
+    { value: 'Onion', label: 'بصل' },
+    // American Varieties
+    { value: 'Idaho Potato', label: 'بطاطس أيداهو' },
+    { value: 'California Artichoke', label: 'خرشوف كاليفورنيا' },
+    { value: 'Vidalia Onion', label: 'بصل فيداليا (جورجيا)' },
+    { value: 'New England Pumpkin', label: 'يقطين نيو إنجلاند' },
+    { value: 'Michigan Asparagus', label: 'هليون ميشيغان' },
+    { value: 'North Carolina Sweet Potato', label: 'بطاطا حلوة (كارولاينا الشمالية)' },
+];
+
 
 export const BACKGROUND_GALLERY_OPTIONS: BackgroundGalleryOption[] = [
     {
@@ -124,28 +157,72 @@ export const PRESET_OPTIONS: Preset[] = [
         label: 'بستان الغروب',
         lighting: LightingType.GoldenHour,
         cameraAngle: CameraAngle.WideShot,
+        subjectType: SubjectType.Fruit,
         fruitVariety: 'Washington Cherry',
+        vegetableVariety: 'Red Bell Pepper',
         backgroundPrompt: 'in a lush orchard during a warm sunset, with soft, glowing light filtering through the leaves',
     },
     {
         label: 'مطبخ عصري',
         lighting: LightingType.Studio,
         cameraAngle: CameraAngle.TopView,
+        subjectType: SubjectType.Fruit,
         fruitVariety: 'Hass Avocado',
+        vegetableVariety: 'Cucumber',
         backgroundPrompt: 'sliced neatly on a clean, white marble countertop next to a chef\'s knife',
     },
     {
         label: 'دفقة حمضيات',
         lighting: LightingType.Cinematic,
         cameraAngle: CameraAngle.CloseUp,
+        subjectType: SubjectType.Fruit,
         fruitVariety: 'Florida Orange',
+        vegetableVariety: 'Carrot',
         backgroundPrompt: 'a dynamic splash of water frozen in time against a vibrant, abstract blue and orange background',
     },
     {
         label: 'توت الغابة',
         lighting: LightingType.Natural,
         cameraAngle: CameraAngle.Angle45,
+        subjectType: SubjectType.Fruit,
         fruitVariety: 'Blueberry',
+        vegetableVariety: 'Mushroom',
         backgroundPrompt: 'a handful of fresh blueberries resting on a mossy log in a misty forest setting',
+    },
+    {
+        label: 'جنة استوائية',
+        lighting: LightingType.Natural,
+        cameraAngle: CameraAngle.LowAngle,
+        subjectType: SubjectType.Fruit,
+        fruitVariety: 'Hawaiian Pineapple',
+        vegetableVariety: 'Corn on the cob',
+        backgroundPrompt: 'on a sandy beach with a blurred turquoise ocean and palm leaves in the background',
+    },
+    {
+        label: 'طبيعة صامتة درامية',
+        lighting: LightingType.Dramatic,
+        cameraAngle: CameraAngle.SideView,
+        subjectType: SubjectType.Fruit,
+        fruitVariety: 'California Grapes',
+        vegetableVariety: 'Eggplant',
+        backgroundPrompt: 'spilling out of a silver goblet onto a dark, draped velvet cloth, reminiscent of a classic Dutch still life painting',
+    },
+    {
+        label: 'صفاء وبساطة',
+        lighting: LightingType.Studio,
+        cameraAngle: CameraAngle.FrontView,
+        subjectType: SubjectType.Fruit,
+        fruitVariety: 'Green Pear',
+        vegetableVariety: 'Lettuce Head',
+        backgroundPrompt: 'perfectly placed on a simple slate plate against a soft, out-of-focus gray background',
+    },
+    {
+        label: 'سوق المزارعين',
+        lighting: LightingType.Natural,
+        cameraAngle: CameraAngle.HighAngle,
+        subjectType: SubjectType.Fruit,
+        fruitVariety: 'Red Apple',
+        vegetableVariety: 'Red Tomato on the Vine',
+        backgroundPrompt: 'in a rustic wooden crate at a bustling farmers market, with other produce softly blurred in the background',
     },
 ];

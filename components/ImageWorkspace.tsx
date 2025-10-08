@@ -1,6 +1,6 @@
 import React, { useCallback, useRef } from 'react';
 import { UploadIcon, LoadingSpinner, ErrorIcon, ImageIcon } from './icons';
-import { ImageFilter, AspectRatio } from '../types';
+import { ImageFilter, AspectRatio, TextureEffect } from '../types';
 
 interface ImageWorkspaceProps {
     originalImage: string | null;
@@ -13,6 +13,8 @@ interface ImageWorkspaceProps {
     previewAspectRatio: AspectRatio | null;
     activeFilter: ImageFilter;
     previewFilter: ImageFilter | null;
+    activeTexture: TextureEffect;
+    previewTexture: TextureEffect | null;
     colorFilterStyle: React.CSSProperties;
 }
 
@@ -30,6 +32,17 @@ const getFilterClassName = (filter: ImageFilter): string => {
         default: return '';
     }
 };
+
+const getTextureClassName = (texture: TextureEffect): string => {
+    switch (texture) {
+        case TextureEffect.Canvas: return 'texture-canvas';
+        case TextureEffect.Grainy: return 'texture-grainy';
+        case TextureEffect.Rough: return 'texture-rough';
+        case TextureEffect.Smooth: return 'texture-smooth';
+        default: return '';
+    }
+};
+
 
 const getAspectRatioClassName = (ratio: AspectRatio): string => {
     switch (ratio) {
@@ -56,6 +69,8 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
     previewAspectRatio,
     activeFilter,
     previewFilter,
+    activeTexture,
+    previewTexture,
     colorFilterStyle,
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -73,6 +88,10 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
 
     const currentRatio = previewAspectRatio ?? aspectRatio;
     const ratioClass = getAspectRatioClassName(currentRatio);
+    const currentTexture = previewTexture ?? activeTexture;
+    const textureClass = getTextureClassName(currentTexture);
+    const currentFilter = previewFilter ?? activeFilter;
+    const filterClass = getFilterClassName(currentFilter);
 
     const renderPlaceholder = (title: string, content: React.ReactNode) => (
         <div className={`w-full max-w-full bg-gray-800/60 rounded-xl border-2 border-dashed border-gray-600 flex flex-col justify-center items-center p-4 text-center ${ratioClass}`}>
@@ -120,12 +139,14 @@ const ImageWorkspace: React.FC<ImageWorkspaceProps> = ({
                     renderPlaceholder('خطأ', <div className="flex flex-col items-center"><ErrorIcon /><p className="mt-2 text-red-400">{error}</p></div>)
                 ) : generatedImage ? (
                     <div className={`w-full bg-black rounded-lg overflow-hidden flex items-center justify-center relative ${ratioClass}`}>
-                        <img 
-                            src={generatedImage} 
-                            alt="Generated" 
-                            className={`max-w-full max-h-full object-contain transition-all duration-300 ${getFilterClassName(previewFilter ?? activeFilter)}`}
-                            style={colorFilterStyle}
-                        />
+                        <div className={`w-full h-full relative ${textureClass}`}>
+                            <img 
+                                src={generatedImage} 
+                                alt="Generated" 
+                                className={`w-full h-full object-contain transition-all duration-300 ${filterClass}`}
+                                style={colorFilterStyle}
+                            />
+                        </div>
                         {isEnhancing && (
                             <div className="absolute inset-0 bg-black/60 flex flex-col justify-center items-center rounded-lg">
                                 <LoadingSpinner />

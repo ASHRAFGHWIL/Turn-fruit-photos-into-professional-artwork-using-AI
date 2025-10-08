@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import { GoogleGenAI, Modality } from '@google/genai';
-import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality } from './types';
-import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS } from './constants';
+import { CameraAngle, LightingType, AspectRatio, ImageFilter, Preset, ColorAdjustments, OutputQuality, TextureEffect, SubjectType } from './types';
+import { LIGHTING_OPTIONS, CAMERA_ANGLE_OPTIONS, ASPECT_RATIO_OPTIONS, FILTER_OPTIONS, FRUIT_VARIETY_OPTIONS, VEGETABLE_VARIETY_OPTIONS, BACKGROUND_GALLERY_OPTIONS, PRESET_OPTIONS, OUTPUT_QUALITY_OPTIONS, TEXTURE_OPTIONS } from './constants';
 // FIX: Removed ApiKeyError and initializeAi as they are no longer needed. The service now initializes the AI client directly.
 import { transformImage, upscaleImage, generateImageFromScratch, generateAltText, translateText } from './services/geminiService';
 import ImageWorkspace from './components/ImageWorkspace';
@@ -18,7 +18,9 @@ interface GeneratedImageData {
 interface SavedSettings {
     lighting: LightingType;
     cameraAngle: CameraAngle;
+    subjectType: SubjectType;
     fruitVariety: string;
+    vegetableVariety: string;
     aspectRatio: AspectRatio;
     backgroundPrompt: string;
     isTransparent: boolean;
@@ -38,13 +40,17 @@ const App: React.FC = () => {
 
     const [lighting, setLighting] = useState<LightingType>(LightingType.Studio);
     const [cameraAngle, setCameraAngle] = useState<CameraAngle>(CameraAngle.FrontView);
+    const [subjectType, setSubjectType] = useState<SubjectType>(SubjectType.Fruit);
     const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].value);
+    const [vegetableVariety, setVegetableVariety] = useState<string>(VEGETABLE_VARIETY_OPTIONS[0].value);
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Square);
     const [previewAspectRatio, setPreviewAspectRatio] = useState<AspectRatio | null>(null);
     const [backgroundPrompt, setBackgroundPrompt] = useState<string>(BACKGROUND_GALLERY_OPTIONS[0].prompt);
     const [isTransparent, setIsTransparent] = useState<boolean>(false);
     const [activeFilter, setActiveFilter] = useState<ImageFilter>(ImageFilter.None);
     const [previewFilter, setPreviewFilter] = useState<ImageFilter | null>(null);
+    const [activeTexture, setActiveTexture] = useState<TextureEffect>(TextureEffect.None);
+    const [previewTexture, setPreviewTexture] = useState<TextureEffect | null>(null);
     const [colorAdjustments, setColorAdjustments] = useState<ColorAdjustments>(initialColorAdjustments);
     const [outputQuality, setOutputQuality] = useState<OutputQuality>(OutputQuality.Standard);
 
@@ -87,7 +93,9 @@ const App: React.FC = () => {
                 const savedSettings: SavedSettings = JSON.parse(savedSettingsJSON);
                 setLighting(savedSettings.lighting);
                 setCameraAngle(savedSettings.cameraAngle);
+                setSubjectType(savedSettings.subjectType || SubjectType.Fruit);
                 setFruitVariety(savedSettings.fruitVariety);
+                setVegetableVariety(savedSettings.vegetableVariety || VEGETABLE_VARIETY_OPTIONS[0].value);
                 setAspectRatio(savedSettings.aspectRatio);
                 setBackgroundPrompt(savedSettings.backgroundPrompt);
                 setIsTransparent(savedSettings.isTransparent);
@@ -112,7 +120,9 @@ const App: React.FC = () => {
         const settings: SavedSettings = {
             lighting,
             cameraAngle,
+            subjectType,
             fruitVariety,
+            vegetableVariety,
             aspectRatio,
             backgroundPrompt,
             isTransparent,
@@ -126,11 +136,20 @@ const App: React.FC = () => {
     const handlePresetSelect = (preset: Preset) => {
         setLighting(preset.lighting);
         setCameraAngle(preset.cameraAngle);
+        setSubjectType(preset.subjectType);
         setFruitVariety(preset.fruitVariety);
+        setVegetableVariety(preset.vegetableVariety);
         setBackgroundPrompt(preset.backgroundPrompt);
         setIsTransparent(false); // Presets have backgrounds
     };
     
+    const resetFinalTouches = () => {
+        setActiveFilter(ImageFilter.None);
+        setActiveTexture(TextureEffect.None);
+        setColorAdjustments(initialColorAdjustments);
+        resetAltText();
+    }
+
     const resetAltText = () => {
         setAltText('');
         setTranslatedAltText('');
@@ -156,9 +175,7 @@ const App: React.FC = () => {
         setOriginalImageMime('');
         setGeneratedImage(null);
         setError(null);
-        setActiveFilter(ImageFilter.None);
-        setColorAdjustments(initialColorAdjustments);
-        resetAltText();
+        resetFinalTouches();
     };
     
     const handleGenerateFromScratch = useCallback(async () => {
@@ -169,18 +186,17 @@ const App: React.FC = () => {
         // FIX: Removed API key error reset.
         setOriginalImage(null);
         setOriginalImageMime('');
-        setActiveFilter(ImageFilter.None);
-        setColorAdjustments(initialColorAdjustments);
-        resetAltText();
+        resetFinalTouches();
 
         try {
+            const activeVariety = subjectType === SubjectType.Fruit ? fruitVariety : vegetableVariety;
             const result = await generateImageFromScratch({
                 lighting,
                 cameraAngle,
                 aspectRatio,
                 backgroundPrompt: isTransparent ? 'transparent' : backgroundPrompt,
                 isTransparent,
-                fruitVariety,
+                subjectVariety: activeVariety,
             });
             
             const filename = `ghwil-studio-generated-${Date.now()}.png`;
@@ -197,7 +213,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety]);
+    }, [lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, subjectType]);
 
 
     const handleTransform = useCallback(async () => {
@@ -211,15 +227,14 @@ const App: React.FC = () => {
         setGeneratedImage(null);
         setError(null);
         // FIX: Removed API key error reset.
-        setActiveFilter(ImageFilter.None);
-        setColorAdjustments(initialColorAdjustments);
-        resetAltText();
+        resetFinalTouches();
 
         try {
             const base64Data = originalImage.split(',')[1];
             if (!base64Data) {
                 throw new Error("Invalid base64 image data.");
             }
+            const activeVariety = subjectType === SubjectType.Fruit ? fruitVariety : vegetableVariety;
             const result = await transformImage({
                 imageData: base64Data,
                 mimeType: originalImageMime,
@@ -228,7 +243,7 @@ const App: React.FC = () => {
                 aspectRatio,
                 backgroundPrompt: isTransparent ? 'transparent' : backgroundPrompt,
                 isTransparent,
-                fruitVariety,
+                subjectVariety: activeVariety,
             });
             
             const filename = `ghwil-studio-${Date.now()}.png`;
@@ -245,7 +260,7 @@ const App: React.FC = () => {
             setIsLoading(false);
             setLoadingAction(null);
         }
-    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety]);
+    }, [originalImage, originalImageMime, lighting, cameraAngle, aspectRatio, backgroundPrompt, isTransparent, fruitVariety, vegetableVariety, subjectType]);
 
     const handleEnhance = useCallback(async () => {
         if (!generatedImage) {
@@ -266,6 +281,7 @@ const App: React.FC = () => {
                 imageData: base64Data,
                 mimeType: 'image/png',
                 filter: activeFilter,
+                texture: activeTexture,
                 outputQuality: outputQuality,
             });
             
@@ -274,9 +290,7 @@ const App: React.FC = () => {
                 url: `data:image/png;base64,${result}`,
                 filename: filename
             });
-            setActiveFilter(ImageFilter.None); 
-            setColorAdjustments(initialColorAdjustments);
-            resetAltText();
+            resetFinalTouches();
 
         } catch (err) {
             // FIX: Simplified error handling, removed ApiKeyError check.
@@ -285,7 +299,7 @@ const App: React.FC = () => {
         } finally {
             setIsEnhancing(false);
         }
-    }, [generatedImage, activeFilter, outputQuality]);
+    }, [generatedImage, activeFilter, activeTexture, outputQuality]);
 
     const handleGenerateAltText = useCallback(async () => {
         if (!generatedImage) return;
@@ -404,13 +418,21 @@ const App: React.FC = () => {
 
     const enhanceButtonText = useMemo(() => {
         const hasFilter = activeFilter !== ImageFilter.None;
+        const hasTexture = activeTexture !== TextureEffect.None;
         const isForPrint = outputQuality === OutputQuality.HighPrint;
 
-        if (hasFilter && isForPrint) return 'تطبيق الفلتر والتحسين للطباعة';
-        if (hasFilter && !isForPrint) return 'تطبيق الفلتر والتحسين';
-        if (!hasFilter && isForPrint) return 'تحسين وتكبير للطباعة (600 DPI)';
-        return 'تحسين وتكبير قياسي';
-    }, [activeFilter, outputQuality]);
+        let baseText = 'تطبيق وتحسين';
+        if(isForPrint) baseText = 'تطبيق والتحسين للطباعة';
+        if(!hasFilter && !hasTexture) {
+            return isForPrint ? 'تحسين وتكبير للطباعة (600 DPI)' : 'تحسين وتكبير قياسي';
+        }
+        
+        const effects = [];
+        if (hasFilter) effects.push('الفلتر');
+        if (hasTexture) effects.push('الملمس');
+        
+        return `${baseText} (${effects.join(' و ')})`;
+    }, [activeFilter, activeTexture, outputQuality]);
 
     return (
         <div className="min-h-screen bg-gray-900 text-gray-200 flex flex-col items-center p-4 sm:p-6 lg:p-8">
@@ -419,7 +441,7 @@ const App: React.FC = () => {
                     استوديو غويل
                 </h1>
                 <p className="text-lg text-gray-400 mt-2">
-                    حوّل صور الفواكه إلى أعمال فنية احترافية باستخدام الذكاء الاصطناعي
+                    حوّل صور الفواكه والخضروات إلى أعمال فنية احترافية باستخدام الذكاء الاصطناعي
                 </p>
             </header>
 
@@ -478,13 +500,47 @@ const App: React.FC = () => {
                                 {CAMERA_ANGLE_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
                             </select>
                         </div>
-                        {/* Fruit Variety */}
+
+                        {/* Subject Type */}
                         <div>
-                            <label htmlFor="fruitVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفاكهة</label>
-                            <select id="fruitVariety" value={fruitVariety} onChange={(e) => setFruitVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                {FRUIT_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
-                            </select>
+                            <label className="block text-sm font-medium text-gray-300 mb-2">نوع العنصر</label>
+                            <div className="flex justify-between items-center gap-2">
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.Fruit)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.Fruit ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    فاكهة
+                                </button>
+                                <button
+                                    onClick={() => setSubjectType(SubjectType.Vegetable)}
+                                    className={`w-full py-2 px-3 rounded-md text-sm font-bold transition-all duration-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                        ${subjectType === SubjectType.Vegetable ? 'bg-purple-600 text-white shadow-md' : 'bg-gray-700 text-gray-300 hover:bg-gray-600'}`
+                                    }
+                                >
+                                    خضروات
+                                </button>
+                            </div>
                         </div>
+
+                        {/* Fruit/Vegetable Variety */}
+                        {subjectType === SubjectType.Fruit ? (
+                            <div>
+                                <label htmlFor="fruitVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفاكهة</label>
+                                <select id="fruitVariety" value={fruitVariety} onChange={(e) => setFruitVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {FRUIT_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        ) : (
+                            <div>
+                                <label htmlFor="vegetableVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الخضروات</label>
+                                <select id="vegetableVariety" value={vegetableVariety} onChange={(e) => setVegetableVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
+                                    {VEGETABLE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                </select>
+                            </div>
+                        )}
+
                         {/* Aspect Ratio */}
                         <div>
                             <label className="block text-sm font-medium text-gray-300 mb-2">أبعاد الصورة</label>
@@ -586,16 +642,18 @@ const App: React.FC = () => {
                         previewAspectRatio={previewAspectRatio}
                         activeFilter={activeFilter}
                         previewFilter={previewFilter}
+                        activeTexture={activeTexture}
+                        previewTexture={previewTexture}
                         colorFilterStyle={colorFilterStyle}
                     />
                      {generatedImage && !isLoading && !error && (
                          <>
                          <div className="mt-6 p-4 bg-gray-800/50 rounded-xl border border-gray-700">
                             <h3 className="text-xl font-bold mb-4 text-gray-200">اللمسات النهائية</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6">
+                            <div className="space-y-6">
                                 {/* Artistic Filters */}
                                 <div>
-                                    <label className="block text-base font-medium text-gray-300 mb-3">1. اختر فلترًا فنيًا (تأثير فوري)</label>
+                                    <label className="block text-base font-medium text-gray-300 mb-3">1. اختر فلترًا فنيًا</label>
                                     <div className="filter-carousel flex items-center gap-4 overflow-x-auto pb-4 pt-1 -mx-4 px-4">
                                         {FILTER_OPTIONS.map(opt => (
                                             <button
@@ -630,10 +688,37 @@ const App: React.FC = () => {
                                         disabled={isEnhancing}
                                     />
                                 </div>
+                                 {/* Texture Effects */}
+                                 <div>
+                                    <label className="block text-base font-medium text-gray-300 mb-3">3. أضف تأثير الملمس</label>
+                                    <div className="filter-carousel flex items-center gap-4 overflow-x-auto pb-4 pt-1 -mx-4 px-4">
+                                        {TEXTURE_OPTIONS.map(opt => (
+                                            <button
+                                                key={opt.value}
+                                                onClick={() => {
+                                                    setActiveTexture(opt.value);
+                                                    setPreviewTexture(null);
+                                                }}
+                                                onMouseEnter={() => setPreviewTexture(opt.value)}
+                                                onMouseLeave={() => setPreviewTexture(null)}
+                                                disabled={isEnhancing}
+                                                className={`px-5 py-2.5 rounded-full text-sm font-bold transition-all duration-300 whitespace-nowrap transform focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-gray-800 focus-visible:ring-purple-500
+                                                    ${activeTexture === opt.value
+                                                        ? 'bg-purple-600 text-white shadow-lg scale-110'
+                                                        : 'bg-gray-700 text-gray-300 opacity-70 hover:opacity-100 hover:scale-105 hover:bg-gray-600'
+                                                    }
+                                                    disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none
+                                                `}
+                                            >
+                                                {opt.label}
+                                            </button>
+                                        ))}
+                                    </div>
+                                </div>
                             </div>
                             
-                            <div className="mt-6">
-                                <label htmlFor="quality" className="block text-base font-medium text-gray-300 mb-3">3. تحديد جودة التحسين</label>
+                            <div className="mt-8">
+                                <label htmlFor="quality" className="block text-base font-medium text-gray-300 mb-3">4. تحديد جودة التحسين</label>
                                 <select 
                                     id="quality" 
                                     value={outputQuality} 
@@ -661,7 +746,7 @@ const App: React.FC = () => {
                                     className="w-full flex justify-center items-center gap-2 bg-green-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg hover:bg-green-700 transform hover:-translate-y-0.5 transition-all duration-300"
                                 >
                                     <DownloadIcon />
-                                    تحميل الصورة النهائية
+                                    تحميل الصورة (بفلاتر المعاينة)
                                 </button>
                            </div>
                          </div>
