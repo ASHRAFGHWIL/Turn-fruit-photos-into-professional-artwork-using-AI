@@ -7,6 +7,12 @@ export enum LightingType {
     BlueHour = 'blue hour lighting',
     Cinematic = 'cinematic lighting',
     Dramatic = 'dramatic lighting',
+    Softbox = 'softbox lighting',
+    Hard = 'hard lighting',
+    Rim = 'rim lighting',
+    Rembrandt = 'rembrandt lighting',
+    Split = 'split lighting',
+    Butterfly = 'butterfly lighting',
 }
 
 export enum CameraAngle {

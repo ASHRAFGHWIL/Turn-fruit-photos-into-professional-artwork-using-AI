@@ -1,10 +1,20 @@
 import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality, TextureEffect, SubjectType } from './types';
 
 export const LIGHTING_OPTIONS: Option<LightingType>[] = [
-    { value: LightingType.Studio, label: 'إضاءة استوديو' },
+    // Natural Light
     { value: LightingType.Natural, label: 'إضاءة طبيعية' },
     { value: LightingType.GoldenHour, label: 'الساعة الذهبية' },
     { value: LightingType.BlueHour, label: 'الساعة الزرقاء' },
+    // Studio General
+    { value: LightingType.Studio, label: 'إضاءة استوديو عامة' },
+    { value: LightingType.Softbox, label: 'إضاءة سوفت بوكس (ناعمة)' },
+    { value: LightingType.Hard, label: 'إضاءة حادة (مباشرة)' },
+    // Professional Techniques
+    { value: LightingType.Butterfly, label: 'إضاءة الفراشة' },
+    { value: LightingType.Split, label: 'إضاءة منقسمة' },
+    { value: LightingType.Rembrandt, label: 'إضاءة رامبرانت' },
+    { value: LightingType.Rim, label: 'إضاءة حافة' },
+    // Artistic/Mood
     { value: LightingType.Cinematic, label: 'سينمائية' },
     { value: LightingType.Dramatic, label: 'درامية' },
 ];
@@ -172,12 +182,19 @@ export const BAKED_GOODS_VARIETY_OPTIONS: Option<string>[] = [
     { value: 'a freshly baked New York Style Bagel with cream cheese', label: 'بيغل على طريقة نيويورك' },
     { value: 'a gooey Cinnamon Roll with frosting', label: 'لفافة القرفة (سينابون)' },
     { value: 'a rich, fudgy Chocolate Brownie', label: 'براوني الشوكولاتة' },
+    { value: 'a classic Glazed Donut', label: 'دونات كلاسيكي' },
+    { value: 'a Red Velvet Cupcake with cream cheese frosting', label: 'كب كيك ريد فيلفيت' },
+    { value: 'a slice of golden American Cornbread', label: 'خبز الذرة الأمريكي' },
     // European Baked Goods
     { value: 'a flaky, buttery French Croissant', label: 'كرواسان فرنسي' },
     { value: 'a traditional British Scone with clotted cream and jam', label: 'سكون بريطاني' },
     { value: 'a crisp Italian Cannoli with a sweet ricotta filling', label: 'كانولي إيطالي' },
     { value: 'a Portuguese Pastel de Nata with a caramelized top', label: 'باستيل دي ناتا برتغالي' },
     { value: 'a classic German Pretzel with salt crystals', label: 'بريتزل ألماني' },
+    { value: 'a delicate French Macaron', label: 'ماكرون فرنسي' },
+    { value: 'a Chocolate Éclair with cream filling', label: 'إكلير الشوكولاتة' },
+    { value: 'a slice of German Black Forest Cake (Schwarzwälder Kirschtorte)', label: 'كعكة الغابة السوداء' },
+    { value: 'a shell-shaped French Madeleine cookie', label: 'كعكة المادلين' },
 ];
 
 
