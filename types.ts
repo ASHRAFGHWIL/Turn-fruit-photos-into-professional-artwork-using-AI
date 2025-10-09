@@ -79,6 +79,11 @@ export interface Option<T> {
     label: string;
 }
 
+export interface OptionGroup<T> {
+    label: string;
+    options: Option<T>[];
+}
+
 export interface ColorAdjustments {
     brightness: number;
     contrast: number;

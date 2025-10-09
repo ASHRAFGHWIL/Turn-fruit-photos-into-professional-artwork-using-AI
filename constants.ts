@@ -1,4 +1,4 @@
-import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality, TextureEffect, SubjectType } from './types';
+import { LightingType, CameraAngle, AspectRatio, ImageFilter, Option, OptionGroup, Preset, BackgroundGalleryOption, BackgroundOption, OutputQuality, TextureEffect, SubjectType } from './types';
 
 export const LIGHTING_OPTIONS: Option<LightingType>[] = [
     // Natural Light
@@ -66,135 +66,211 @@ export const OUTPUT_QUALITY_OPTIONS: Option<OutputQuality>[] = [
     { value: OutputQuality.HighPrint, label: 'تحسين للطباعة (600 DPI)' },
 ];
 
-export const FRUIT_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'any high-quality fruit', label: 'فاكهة عامة عالية الجودة' },
-    // Common Fruits
-    { value: 'Red Apple', label: 'تفاح أحمر' },
-    { value: 'Green Pear', label: 'كمثرى خضراء' },
-    { value: 'Strawberry', label: 'فراولة' },
-    { value: 'Blueberry', label: 'توت أزرق' },
-    // American Varieties
-    { value: 'Florida Orange', label: 'برتقال فلوريدا' },
-    { value: 'California Grapes', label: 'عنب كاليفورنيا' },
-    { value: 'Georgia Peach', label: 'خوخ جورجيا' },
-    { value: 'Washington Cherry', label: 'كرز واشنطن' },
-    { value: 'Hass Avocado', label: 'أفوكادو هاس' },
-    { value: 'Wisconsin Cranberry', label: 'توت بري (ويسكونسن)' },
-    { value: 'Florida Key Lime', label: 'ليمون أخضر (فلوريدا)' },
-    { value: 'Honeycrisp Apple', label: 'تفاح هني كريسب' },
-    { value: 'Concord Grapes', label: 'عنب كونكورد' },
-    { value: 'Oregon Marionberry', label: 'توت ماريون (أوريغون)' },
-    { value: 'Hawaiian Pineapple', label: 'أناناس هاواي' },
-    // European Varieties
-    { value: 'Mediterranean Lemon', label: 'ليمون متوسطي' },
-    { value: 'Italian Fig', label: 'تين إيطالي' },
-    { value: 'Spanish Olives', label: 'زيتون إسباني' },
-    { value: 'Italian Blood Orange', label: 'برتقال دم الزغلول (إيطاليا)' },
-    { value: 'French Agen Prune', label: 'برقوق أجين (فرنسا)' },
-    { value: 'Greek Kalamata Olives', label: 'زيتون كالاماتا (اليونان)' },
-    { value: 'Portuguese Rocha Pear', label: 'كمثرى روشا (البرتغال)' },
-    { value: 'Spanish Persimmon', label: 'كاكي (إسبانيا)' },
+export const FRUIT_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'any high-quality fruit', label: 'فاكهة عامة عالية الجودة' },
+            { value: 'Red Apple', label: 'تفاح أحمر' },
+            { value: 'Green Pear', label: 'كمثرى خضراء' },
+            { value: 'Strawberry', label: 'فراولة' },
+            { value: 'Blueberry', label: 'توت أزرق' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'Florida Orange', label: 'برتقال فلوريدا' },
+            { value: 'California Grapes', label: 'عنب كاليفورنيا' },
+            { value: 'Georgia Peach', label: 'خوخ جورجيا' },
+            { value: 'Washington Cherry', label: 'كرز واشنطن' },
+            { value: 'Hass Avocado', label: 'أفوكادو هاس' },
+            { value: 'Wisconsin Cranberry', label: 'توت بري (ويسكونسن)' },
+            { value: 'Florida Key Lime', label: 'ليمون أخضر (فلوريدا)' },
+            { value: 'Honeycrisp Apple', label: 'تفاح هني كريسب' },
+            { value: 'Concord Grapes', label: 'عنب كونكورد' },
+            { value: 'Oregon Marionberry', label: 'توت ماريون (أوريغون)' },
+            { value: 'Hawaiian Pineapple', label: 'أناناس هاواي' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'Mediterranean Lemon', label: 'ليمون متوسطي' },
+            { value: 'Italian Fig', label: 'تين إيطالي' },
+            { value: 'Spanish Olives', label: 'زيتون إسباني' },
+            { value: 'Italian Blood Orange', label: 'برتقال دم الزغلول (إيطاليا)' },
+            { value: 'French Agen Prune', label: 'برقوق أجين (فرنسا)' },
+            { value: 'Greek Kalamata Olives', label: 'زيتون كالاماتا (اليونان)' },
+            { value: 'Portuguese Rocha Pear', label: 'كمثرى روشا (البرتغال)' },
+            { value: 'Spanish Persimmon', label: 'كاكي (إسبانيا)' },
+        ]
+    }
 ];
 
-export const VEGETABLE_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'any high-quality vegetable', label: 'خضار عام عالي الجودة' },
-    // Common Vegetables
-    { value: 'Red Tomato on the Vine', label: 'طماطم حمراء (عنقود)' },
-    { value: 'Carrot', label: 'جزر' },
-    { value: 'Cucumber', label: 'خيار' },
-    { value: 'Red Bell Pepper', label: 'فلفل أحمر' },
-    { value: 'Broccoli', label: 'بروكلي' },
-    { value: 'Eggplant', label: 'باذنجان' },
-    { value: 'Corn on the cob', label: 'ذرة' },
-    { value: 'Lettuce Head', label: 'خس' },
-    { value: 'Mushroom', label: 'فطر' },
-    { value: 'Potato', label: 'بطاطس' },
-    { value: 'Onion', label: 'بصل' },
-    // American Varieties
-    { value: 'Idaho Potato', label: 'بطاطس أيداهو' },
-    { value: 'California Artichoke', label: 'خرشوف كاليفورنيا' },
-    { value: 'Vidalia Onion', label: 'بصل فيداليا (جورجيا)' },
-    { value: 'New England Pumpkin', label: 'يقطين نيو إنجلاند' },
-    { value: 'Michigan Asparagus', label: 'هليون ميشيغان' },
-    { value: 'North Carolina Sweet Potato', label: 'بطاطا حلوة (كارولاينا الشمالية)' },
-    // European Varieties
-    { value: 'San Marzano Tomato', label: 'طماطم سان مارزانو (إيطاليا)' },
-    { value: 'Belgian Endive', label: 'الهندباء البلجيكية' },
-    { value: 'Tuscan Kale (Cavolo Nero)', label: 'كيل توسكاني (كافولو نيرو)' },
-    { value: 'French Leek', label: 'الكراث الفرنسي' },
-    { value: 'Italian Fennel', label: 'الشمر الإيطالي' },
-    { value: 'Romanesco Broccoli', label: 'بروكلي رومانسكي' },
+export const VEGETABLE_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'any high-quality vegetable', label: 'خضار عام عالي الجودة' },
+            { value: 'Red Tomato on the Vine', label: 'طماطم حمراء (عنقود)' },
+            { value: 'Carrot', label: 'جزر' },
+            { value: 'Cucumber', label: 'خيار' },
+            { value: 'Red Bell Pepper', label: 'فلفل أحمر' },
+            { value: 'Broccoli', label: 'بروكلي' },
+            { value: 'Eggplant', label: 'باذنجان' },
+            { value: 'Corn on the cob', label: 'ذرة' },
+            { value: 'Lettuce Head', label: 'خس' },
+            { value: 'Mushroom', label: 'فطر' },
+            { value: 'Potato', label: 'بطاطس' },
+            { value: 'Onion', label: 'بصل' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'Idaho Potato', label: 'بطاطس أيداهو' },
+            { value: 'California Artichoke', label: 'خرشوف كاليفورنيا' },
+            { value: 'Vidalia Onion', label: 'بصل فيداليا (جورجيا)' },
+            { value: 'New England Pumpkin', label: 'يقطين نيو إنجلاند' },
+            { value: 'Michigan Asparagus', label: 'هليون ميشيغان' },
+            { value: 'North Carolina Sweet Potato', label: 'بطاطا حلوة (كارولاينا الشمالية)' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'San Marzano Tomato', label: 'طماطم سان مارزانو (إيطاليا)' },
+            { value: 'Belgian Endive', label: 'الهندباء البلجيكية' },
+            { value: 'Tuscan Kale (Cavolo Nero)', label: 'كيل توسكاني (كافولو نيرو)' },
+            { value: 'French Leek', label: 'الكراث الفرنسي' },
+            { value: 'Italian Fennel', label: 'الشمر الإيطالي' },
+            { value: 'Romanesco Broccoli', label: 'بروكلي رومانسكي' },
+        ]
+    }
 ];
 
-export const SANDWICH_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'any high-quality sandwich', label: 'ساندويتش عام عالي الجودة' },
-    // American Sandwiches
-    { value: 'Classic Philly Cheesesteak sandwich', label: 'فيلي تشيز ستيك' },
-    { value: 'Reuben sandwich with corned beef and sauerkraut', label: 'ساندويتش روبن' },
-    { value: 'BLT (Bacon, Lettuce, Tomato) sandwich', label: 'ساندويتش بي إل تي' },
-    { value: 'Classic American Club Sandwich', label: 'كلوب ساندويتش' },
-    { value: 'Pulled Pork Sandwich with barbecue sauce', label: 'ساندويتش اللحم المسحوب' },
-    { value: 'New England Lobster Roll', label: 'لوبستر رول' },
-    // European Sandwiches
-    { value: 'Italian Panini with prosciutto and mozzarella', label: 'بانيني إيطالي' },
-    { value: 'French Croque Monsieur', label: 'كروك موسيو الفرنسي' },
-    { value: 'Danish Smørrebrød (open-faced sandwich)', label: 'سموربرود دنماركي' },
-    { value: 'Spanish Bocadillo de Calamares', label: 'بوكاديو كالاماري الإسباني' },
-    { value: 'German Doner Kebab in pita bread', label: 'دونر كباب ألماني' },
-    { value: 'Greek Gyro in pita bread', label: 'جيرو يوناني' },
+export const SANDWICH_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'any high-quality sandwich', label: 'ساندويتش عام عالي الجودة' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'Classic Philly Cheesesteak sandwich', label: 'فيلي تشيز ستيك' },
+            { value: 'Reuben sandwich with corned beef and sauerkraut', label: 'ساندويتش روبن' },
+            { value: 'BLT (Bacon, Lettuce, Tomato) sandwich', label: 'ساندويتش بي إل تي' },
+            { value: 'Classic American Club Sandwich', label: 'كلوب ساندويتش' },
+            { value: 'Pulled Pork Sandwich with barbecue sauce', label: 'ساندويتش اللحم المسحوب' },
+            { value: 'New England Lobster Roll', label: 'لوبستر رول' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'Italian Panini with prosciutto and mozzarella', label: 'بانيني إيطالي' },
+            { value: 'French Croque Monsieur', label: 'كروك موسيو الفرنسي' },
+            { value: 'Danish Smørrebrød (open-faced sandwich)', label: 'سموربرود دنماركي' },
+            { value: 'Spanish Bocadillo de Calamares', label: 'بوكاديو كالاماري الإسباني' },
+            { value: 'German Doner Kebab in pita bread', label: 'دونر كباب ألماني' },
+            { value: 'Greek Gyro in pita bread', label: 'جيرو يوناني' },
+        ]
+    }
 ];
 
-export const JUICE_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'a glass of any high-quality juice', label: 'عصير عام عالي الجودة' },
-    // American Juices
-    { value: 'a glass of fresh Florida Orange Juice', label: 'عصير برتقال فلوريدا' },
-    { value: 'a glass of deep red Cranberry Juice', label: 'عصير توت بري أحمر' },
-    { value: 'a tall glass of classic American Lemonade with a lemon slice', label: 'ليموناضة أمريكية كلاسيكية' },
-    { value: 'a glass of Concord Grape Juice', label: 'عصير عنب كونكورد' },
-    { value: 'a glass of crisp Apple Juice', label: 'عصير تفاح' },
-    // European Juices
-    { value: 'a glass of rich Italian Peach Nectar', label: 'رحيق الخوخ الإيطالي' },
-    { value: 'a glass of British Blackcurrant cordial (Ribena style)', label: 'شراب الكشمش الأسود البريطاني' },
-    { value: 'a glass of refreshing Elderflower Cordial with a sprig of mint', label: 'شراب زهرة البيلسان المنعش' },
-    { value: 'a glass of vibrant Spanish Tomato Juice (Gazpacho style)', label: 'عصير طماطم إسباني (غازباتشو)' },
-    { value: 'a glass of healthy German Carrot Juice', label: 'عصير جزر ألماني' },
+export const JUICE_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'a glass of any high-quality juice', label: 'عصير عام عالي الجودة' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'a glass of fresh Florida Orange Juice', label: 'عصير برتقال فلوريدا' },
+            { value: 'a glass of deep red Cranberry Juice', label: 'عصير توت بري أحمر' },
+            { value: 'a tall glass of classic American Lemonade with a lemon slice', label: 'ليموناضة أمريكية كلاسيكية' },
+            { value: 'a glass of Concord Grape Juice', label: 'عصير عنب كونكورد' },
+            { value: 'a glass of crisp Apple Juice', label: 'عصير تفاح' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'a glass of rich Italian Peach Nectar', label: 'رحيق الخوخ الإيطالي' },
+            { value: 'a glass of British Blackcurrant cordial (Ribena style)', label: 'شراب الكشمش الأسود البريطاني' },
+            { value: 'a glass of refreshing Elderflower Cordial with a sprig of mint', label: 'شراب زهرة البيلسان المنعش' },
+            { value: 'a glass of vibrant Spanish Tomato Juice (Gazpacho style)', label: 'عصير طماطم إسباني (غازباتشو)' },
+            { value: 'a glass of healthy German Carrot Juice', label: 'عصير جزر ألماني' },
+        ]
+    }
 ];
 
-export const PIE_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'any high-quality pie', label: 'فطيرة عامة عالية الجودة' },
-    // American Pies
-    { value: 'a classic American Apple Pie with a lattice crust', label: 'فطيرة تفاح أمريكية كلاسيكية' },
-    { value: 'a slice of Southern Pecan Pie', label: 'فطيرة جوز البقان الجنوبية' },
-    { value: 'a slice of Florida Key Lime Pie with whipped cream', label: 'فطيرة ليمون (كي لايم)' },
-    { value: 'a rich Pumpkin Pie for Thanksgiving', label: 'فطيرة يقطين (عيد الشكر)' },
-    // European Pies
-    { value: 'a slice of British Banoffee Pie', label: 'فطيرة بانوفي بريطانية' },
-    { value: 'a rustic French Tarte Tatin with caramelized apples', label: 'تارت تاتان فرنسية' },
-    { value: 'a traditional Austrian Apfelstrudel with powdered sugar', label: 'فطيرة التفاح النمساوية (أبفل شترودل)' },
-    { value: 'a slice of English Lemon Meringue Pie', label: 'فطيرة ليمون بالمرينغ إنجليزية' },
+export const PIE_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'any high-quality pie', label: 'فطيرة عامة عالية الجودة' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'a classic American Apple Pie with a lattice crust', label: 'فطيرة تفاح أمريكية كلاسيكية' },
+            { value: 'a slice of Southern Pecan Pie', label: 'فطيرة جوز البقان الجنوبية' },
+            { value: 'a slice of Florida Key Lime Pie with whipped cream', label: 'فطيرة ليمون (كي لايم)' },
+            { value: 'a rich Pumpkin Pie for Thanksgiving', label: 'فطيرة يقطين (عيد الشكر)' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'a slice of British Banoffee Pie', label: 'فطيرة بانوفي بريطانية' },
+            { value: 'a rustic French Tarte Tatin with caramelized apples', label: 'تارت تاتان فرنسية' },
+            { value: 'a traditional Austrian Apfelstrudel with powdered sugar', label: 'فطيرة التفاح النمساوية (أبفل شترودل)' },
+            { value: 'a slice of English Lemon Meringue Pie', label: 'فطيرة ليمون بالمرينغ إنجليزية' },
+        ]
+    }
 ];
 
-export const BAKED_GOODS_VARIETY_OPTIONS: Option<string>[] = [
-    { value: 'any high-quality baked good', label: 'مخبوزات عامة عالية الجودة' },
-    // American Baked Goods
-    { value: 'a warm, fluffy Blueberry Muffin', label: 'مافن التوت الأزرق' },
-    { value: 'a classic Chocolate Chip Cookie', label: 'كوكيز رقائق الشوكولاتة' },
-    { value: 'a freshly baked New York Style Bagel with cream cheese', label: 'بيغل على طريقة نيويورك' },
-    { value: 'a gooey Cinnamon Roll with frosting', label: 'لفافة القرفة (سينابون)' },
-    { value: 'a rich, fudgy Chocolate Brownie', label: 'براوني الشوكولاتة' },
-    { value: 'a classic Glazed Donut', label: 'دونات كلاسيكي' },
-    { value: 'a Red Velvet Cupcake with cream cheese frosting', label: 'كب كيك ريد فيلفيت' },
-    { value: 'a slice of golden American Cornbread', label: 'خبز الذرة الأمريكي' },
-    // European Baked Goods
-    { value: 'a flaky, buttery French Croissant', label: 'كرواسان فرنسي' },
-    { value: 'a traditional British Scone with clotted cream and jam', label: 'سكون بريطاني' },
-    { value: 'a crisp Italian Cannoli with a sweet ricotta filling', label: 'كانولي إيطالي' },
-    { value: 'a Portuguese Pastel de Nata with a caramelized top', label: 'باستيل دي ناتا برتغالي' },
-    { value: 'a classic German Pretzel with salt crystals', label: 'بريتزل ألماني' },
-    { value: 'a delicate French Macaron', label: 'ماكرون فرنسي' },
-    { value: 'a Chocolate Éclair with cream filling', label: 'إكلير الشوكولاتة' },
-    { value: 'a slice of German Black Forest Cake (Schwarzwälder Kirschtorte)', label: 'كعكة الغابة السوداء' },
-    { value: 'a shell-shaped French Madeleine cookie', label: 'كعكة المادلين' },
+export const BAKED_GOODS_VARIETY_OPTIONS: OptionGroup<string>[] = [
+    {
+        label: 'General',
+        options: [
+            { value: 'any high-quality baked good', label: 'مخبوزات عامة عالية الجودة' },
+        ]
+    },
+    {
+        label: 'American Items',
+        options: [
+            { value: 'a warm, fluffy Blueberry Muffin', label: 'مافن التوت الأزرق' },
+            { value: 'a classic Chocolate Chip Cookie', label: 'كوكيز رقائق الشوكولاتة' },
+            { value: 'a freshly baked New York Style Bagel with cream cheese', label: 'بيغل على طريقة نيويورك' },
+            { value: 'a gooey Cinnamon Roll with frosting', label: 'لفافة القرفة (سينابون)' },
+            { value: 'a rich, fudgy Chocolate Brownie', label: 'براوني الشوكولاتة' },
+            { value: 'a classic Glazed Donut', label: 'دونات كلاسيكي' },
+            { value: 'a Red Velvet Cupcake with cream cheese frosting', label: 'كب كيك ريد فيلفيت' },
+            { value: 'a slice of golden American Cornbread', label: 'خبز الذرة الأمريكي' },
+        ]
+    },
+    {
+        label: 'European Items',
+        options: [
+            { value: 'a flaky, buttery French Croissant', label: 'كرواسان فرنسي' },
+            { value: 'a traditional British Scone with clotted cream and jam', label: 'سكون بريطاني' },
+            { value: 'a crisp Italian Cannoli with a sweet ricotta filling', label: 'كانولي إيطالي' },
+            { value: 'a Portuguese Pastel de Nata with a caramelized top', label: 'باستيل دي ناتا برتغالي' },
+            { value: 'a classic German Pretzel with salt crystals', label: 'بريتزل ألماني' },
+            { value: 'a delicate French Macaron', label: 'ماكرون فرنسي' },
+            { value: 'a Chocolate Éclair with cream filling', label: 'إكلير الشوكولاتة' },
+            { value: 'a slice of German Black Forest Cake (Schwarzwälder Kirschtorte)', label: 'كعكة الغابة السوداء' },
+            { value: 'a shell-shaped French Madeleine cookie', label: 'كعكة المادلين' },
+        ]
+    }
 ];
 
 
@@ -253,10 +329,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Washington Cherry',
         vegetableVariety: 'Red Bell Pepper',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'in a lush orchard during a warm sunset, with soft, glowing light filtering through the leaves',
     },
     {
@@ -266,10 +342,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Hass Avocado',
         vegetableVariety: 'Cucumber',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'sliced neatly on a clean, white marble countertop next to a chef\'s knife',
     },
     {
@@ -279,10 +355,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Florida Orange',
         vegetableVariety: 'Carrot',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'a dynamic splash of water frozen in time against a vibrant, abstract blue and orange background',
     },
     {
@@ -292,10 +368,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Blueberry',
         vegetableVariety: 'Mushroom',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'a handful of fresh blueberries resting on a mossy log in a misty forest setting',
     },
     {
@@ -305,10 +381,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Hawaiian Pineapple',
         vegetableVariety: 'Corn on the cob',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a sandy beach with a blurred turquoise ocean and palm leaves in the background',
     },
     {
@@ -318,10 +394,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'California Grapes',
         vegetableVariety: 'Eggplant',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'spilling out of a silver goblet onto a dark, draped velvet cloth, reminiscent of a classic Dutch still life painting',
     },
     {
@@ -331,10 +407,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Green Pear',
         vegetableVariety: 'Lettuce Head',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'perfectly placed on a simple slate plate against a soft, out-of-focus gray background',
     },
     {
@@ -344,10 +420,10 @@ export const PRESET_OPTIONS: Preset[] = [
         subjectType: SubjectType.Fruit,
         fruitVariety: 'Red Apple',
         vegetableVariety: 'Red Tomato on the Vine',
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'in a rustic wooden crate at a bustling farmers market, with other produce softly blurred in the background',
     },
     {
@@ -355,12 +431,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.Dramatic,
         cameraAngle: CameraAngle.Angle45,
         subjectType: SubjectType.Sandwich,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
         sandwichVariety: 'Reuben sandwich with corned beef and sauerkraut',
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a dark wooden table in a classic New York deli, with a pickle spear on the side',
     },
     {
@@ -368,12 +444,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.Natural,
         cameraAngle: CameraAngle.SideView,
         subjectType: SubjectType.Sandwich,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
         sandwichVariety: 'French Croque Monsieur',
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a small marble cafe table in Paris, with a blurred street scene in the background',
     },
     {
@@ -381,12 +457,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.Natural,
         cameraAngle: CameraAngle.Angle45,
         subjectType: SubjectType.Juice,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
         juiceVariety: 'a glass of fresh Florida Orange Juice',
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a bright kitchen table with morning sunlight streaming in, next to a pitcher of orange juice',
     },
     {
@@ -394,12 +470,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.GoldenHour,
         cameraAngle: CameraAngle.LowAngle,
         subjectType: SubjectType.Juice,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
         juiceVariety: 'a glass of refreshing Elderflower Cordial with a sprig of mint',
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a rustic wooden bench in an english garden during sunset, with flowers blurred in the background',
     },
     {
@@ -407,12 +483,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.GoldenHour,
         cameraAngle: CameraAngle.Angle45,
         subjectType: SubjectType.Pie,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
         pieVariety: 'a rich Pumpkin Pie for Thanksgiving',
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a rustic wooden table, surrounded by autumn leaves and a warm, cozy fireplace in the background',
     },
     {
@@ -420,12 +496,12 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.Natural,
         cameraAngle: CameraAngle.CloseUp,
         subjectType: SubjectType.Pie,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
         pieVariety: 'a rustic French Tarte Tatin with caramelized apples',
-        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].value,
+        bakedGoodsVariety: BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value,
         backgroundPrompt: 'on a marble pastry counter in a classic European patisserie, with soft window light',
     },
     {
@@ -433,11 +509,11 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.Natural,
         cameraAngle: CameraAngle.Angle45,
         subjectType: SubjectType.BakedGoods,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
         bakedGoodsVariety: 'a freshly baked New York Style Bagel with cream cheese',
         backgroundPrompt: 'on a rustic wooden board with a blurred background of a bustling Brooklyn bakery',
     },
@@ -446,11 +522,11 @@ export const PRESET_OPTIONS: Preset[] = [
         lighting: LightingType.GoldenHour,
         cameraAngle: CameraAngle.CloseUp,
         subjectType: SubjectType.BakedGoods,
-        fruitVariety: FRUIT_VARIETY_OPTIONS[0].value,
-        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].value,
-        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].value,
-        juiceVariety: JUICE_VARIETY_OPTIONS[0].value,
-        pieVariety: PIE_VARIETY_OPTIONS[0].value,
+        fruitVariety: FRUIT_VARIETY_OPTIONS[0].options[0].value,
+        vegetableVariety: VEGETABLE_VARIETY_OPTIONS[0].options[0].value,
+        sandwichVariety: SANDWICH_VARIETY_OPTIONS[0].options[0].value,
+        juiceVariety: JUICE_VARIETY_OPTIONS[0].options[0].value,
+        pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
         bakedGoodsVariety: 'a flaky, buttery French Croissant',
         backgroundPrompt: 'on a white ceramic plate next to a cup of coffee on a Parisian cafe table',
     },

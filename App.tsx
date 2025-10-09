@@ -46,12 +46,12 @@ const App: React.FC = () => {
     const [lighting, setLighting] = useState<LightingType>(LightingType.Studio);
     const [cameraAngle, setCameraAngle] = useState<CameraAngle>(CameraAngle.FrontView);
     const [subjectType, setSubjectType] = useState<SubjectType>(SubjectType.Fruit);
-    const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].value);
-    const [vegetableVariety, setVegetableVariety] = useState<string>(VEGETABLE_VARIETY_OPTIONS[0].value);
-    const [sandwichVariety, setSandwichVariety] = useState<string>(SANDWICH_VARIETY_OPTIONS[0].value);
-    const [juiceVariety, setJuiceVariety] = useState<string>(JUICE_VARIETY_OPTIONS[0].value);
-    const [pieVariety, setPieVariety] = useState<string>(PIE_VARIETY_OPTIONS[0].value);
-    const [bakedGoodsVariety, setBakedGoodsVariety] = useState<string>(BAKED_GOODS_VARIETY_OPTIONS[0].value);
+    const [fruitVariety, setFruitVariety] = useState<string>(FRUIT_VARIETY_OPTIONS[0].options[0].value);
+    const [vegetableVariety, setVegetableVariety] = useState<string>(VEGETABLE_VARIETY_OPTIONS[0].options[0].value);
+    const [sandwichVariety, setSandwichVariety] = useState<string>(SANDWICH_VARIETY_OPTIONS[0].options[0].value);
+    const [juiceVariety, setJuiceVariety] = useState<string>(JUICE_VARIETY_OPTIONS[0].options[0].value);
+    const [pieVariety, setPieVariety] = useState<string>(PIE_VARIETY_OPTIONS[0].options[0].value);
+    const [bakedGoodsVariety, setBakedGoodsVariety] = useState<string>(BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value);
     const [aspectRatio, setAspectRatio] = useState<AspectRatio>(AspectRatio.Square);
     const [previewAspectRatio, setPreviewAspectRatio] = useState<AspectRatio | null>(null);
     const [backgroundPrompt, setBackgroundPrompt] = useState<string>(BACKGROUND_GALLERY_OPTIONS[0].prompt);
@@ -106,11 +106,11 @@ const App: React.FC = () => {
                 setCameraAngle(savedSettings.cameraAngle);
                 setSubjectType(savedSettings.subjectType || SubjectType.Fruit);
                 setFruitVariety(savedSettings.fruitVariety);
-                setVegetableVariety(savedSettings.vegetableVariety || VEGETABLE_VARIETY_OPTIONS[0].value);
-                setSandwichVariety(savedSettings.sandwichVariety || SANDWICH_VARIETY_OPTIONS[0].value);
-                setJuiceVariety(savedSettings.juiceVariety || JUICE_VARIETY_OPTIONS[0].value);
-                setPieVariety(savedSettings.pieVariety || PIE_VARIETY_OPTIONS[0].value);
-                setBakedGoodsVariety(savedSettings.bakedGoodsVariety || BAKED_GOODS_VARIETY_OPTIONS[0].value);
+                setVegetableVariety(savedSettings.vegetableVariety || VEGETABLE_VARIETY_OPTIONS[0].options[0].value);
+                setSandwichVariety(savedSettings.sandwichVariety || SANDWICH_VARIETY_OPTIONS[0].options[0].value);
+                setJuiceVariety(savedSettings.juiceVariety || JUICE_VARIETY_OPTIONS[0].options[0].value);
+                setPieVariety(savedSettings.pieVariety || PIE_VARIETY_OPTIONS[0].options[0].value);
+                setBakedGoodsVariety(savedSettings.bakedGoodsVariety || BAKED_GOODS_VARIETY_OPTIONS[0].options[0].value);
                 setAspectRatio(savedSettings.aspectRatio);
                 setBackgroundPrompt(savedSettings.backgroundPrompt);
                 setIsTransparent(savedSettings.isTransparent);
@@ -629,7 +629,13 @@ const App: React.FC = () => {
                             <div>
                                 <label htmlFor="fruitVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفاكهة</label>
                                 <select id="fruitVariety" value={fruitVariety} onChange={(e) => setFruitVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {FRUIT_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {FRUIT_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
@@ -637,7 +643,13 @@ const App: React.FC = () => {
                             <div>
                                 <label htmlFor="vegetableVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الخضروات</label>
                                 <select id="vegetableVariety" value={vegetableVariety} onChange={(e) => setVegetableVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {VEGETABLE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {VEGETABLE_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
@@ -645,7 +657,13 @@ const App: React.FC = () => {
                              <div>
                                 <label htmlFor="sandwichVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الساندويتش</label>
                                 <select id="sandwichVariety" value={sandwichVariety} onChange={(e) => setSandwichVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {SANDWICH_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {SANDWICH_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
@@ -653,7 +671,13 @@ const App: React.FC = () => {
                              <div>
                                 <label htmlFor="juiceVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع العصير</label>
                                 <select id="juiceVariety" value={juiceVariety} onChange={(e) => setJuiceVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {JUICE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {JUICE_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
@@ -661,7 +685,13 @@ const App: React.FC = () => {
                              <div>
                                 <label htmlFor="pieVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع الفطيرة</label>
                                 <select id="pieVariety" value={pieVariety} onChange={(e) => setPieVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {PIE_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {PIE_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
@@ -669,7 +699,13 @@ const App: React.FC = () => {
                              <div>
                                 <label htmlFor="bakedGoodsVariety" className="block text-sm font-medium text-gray-300 mb-2">نوع المخبوزات</label>
                                 <select id="bakedGoodsVariety" value={bakedGoodsVariety} onChange={(e) => setBakedGoodsVariety(e.target.value)} className="w-full bg-gray-700 border border-gray-600 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-purple-500">
-                                    {BAKED_GOODS_VARIETY_OPTIONS.map(opt => <option key={opt.value} value={opt.value}>{opt.label}</option>)}
+                                    {BAKED_GOODS_VARIETY_OPTIONS.map(group => (
+                                        <optgroup key={group.label} label={group.label}>
+                                            {group.options.map(opt => (
+                                                <option key={opt.value} value={opt.value}>{opt.label}</option>
+                                            ))}
+                                        </optgroup>
+                                    ))}
                                 </select>
                             </div>
                         )}
