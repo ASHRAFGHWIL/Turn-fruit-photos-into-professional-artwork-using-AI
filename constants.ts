@@ -105,6 +105,36 @@ export const FRUIT_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'Portuguese Rocha Pear', label: 'كمثرى روشا (البرتغال)' },
             { value: 'Spanish Persimmon', label: 'كاكي (إسبانيا)' },
         ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'Lychee', label: 'ليتشي' },
+            { value: 'Philippine Mango', label: 'مانجو فلبيني' },
+            { value: 'Dragon Fruit (Pitaya)', label: 'فاكهة التنين (بيتايا)' },
+            { value: 'Rambutan', label: 'رامبوتان' },
+            { value: 'Durian', label: 'دوريان' },
+            { value: 'Japanese Yuzu', label: 'يوزو ياباني' },
+            { value: 'Mangosteen', label: 'مانغوستين' },
+            { value: 'Jackfruit', label: 'جاك فروت' },
+            { value: 'Persimmon', label: 'برسيمون (كاكي)' },
+            { value: 'Star Fruit (Carambola)', label: 'فاكهة النجمة (كارامبولا)' },
+            { value: 'Longan', label: 'لونجان' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a bowl of luscious Medjool Dates', label: 'تمر مجدول' },
+            { value: 'a ripe Pomegranate, cut open to show the seeds', label: 'رمان' },
+            { value: 'fresh Figs on a plate', label: 'تين طازج' },
+            { value: 'a sweet Guava, sliced', label: 'جوافة' },
+            { value: 'a prickly pear (Sabr)', label: 'صبر (تين شوكي)' },
+            { value: 'a bowl of fresh Apricots (Mishmish)', label: 'مشمش' },
+            { value: 'a bunch of green Grapes', label: 'عنب' },
+            { value: 'a slice of juicy Watermelon', label: 'بطيخ' },
+            { value: 'a sliced Cantaloupe melon (Shammam)', label: 'شمام' },
+        ]
     }
 ];
 
@@ -147,6 +177,37 @@ export const VEGETABLE_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'Italian Fennel', label: 'الشمر الإيطالي' },
             { value: 'Romanesco Broccoli', label: 'بروكلي رومانسكي' },
         ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'Bok Choy', label: 'بوك تشوي' },
+            { value: 'Daikon Radish', label: 'فجل دايكون' },
+            { value: 'Shiitake Mushroom', label: 'فطر شيتاكي' },
+            { value: 'Edamame pods', label: 'إدامامي' },
+            { value: 'Napa Cabbage', label: 'ملفوف نابا' },
+            { value: 'Thai Chili Pepper', label: 'فلفل حار تايلاندي' },
+            { value: 'Japanese Eggplant', label: 'باذنجان ياباني' },
+            { value: 'Ginger root', label: 'جذر الزنجبيل' },
+            { value: 'Lemongrass stalks', label: 'أعواد عشبة الليمون' },
+            { value: 'Chinese Broccoli (Gai Lan)', label: 'بروكلي صيني (جاي لان)' },
+            { value: 'Bitter Melon', label: 'القرع المر' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a bowl of cooked Okra stew (Bamia)', label: 'بامية' },
+            { value: 'fresh Molokhia leaves', label: 'ملوخية' },
+            { value: 'a bowl of cooked Fava Beans (Ful Medames)', label: 'فول مدمس' },
+            { value: 'a bowl of Hummus topped with chickpeas and olive oil', label: 'حمص' },
+            { value: 'stuffed grape leaves (Warak Enab)', label: 'ورق عنب' },
+            { value: 'a plate of Tabbouleh salad', label: 'تبولة' },
+            { value: 'a plate of Stuffed Zucchini (Kousa Mahshi)', label: 'كوسا محشي' },
+            { value: 'a vibrant Fattoush salad with fried pita bread', label: 'فتوش' },
+            { value: 'a bowl of smoky Baba Ghanoush dip', label: 'بابا غنوج' },
+            { value: 'a warm bowl of Lentil soup (Shorbat Adas)', label: 'شوربة عدس' },
+        ]
     }
 ];
 
@@ -178,6 +239,30 @@ export const SANDWICH_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'German Doner Kebab in pita bread', label: 'دونر كباب ألماني' },
             { value: 'Greek Gyro in pita bread', label: 'جيرو يوناني' },
         ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'Vietnamese Banh Mi sandwich', label: 'بانه مي فيتنامي' },
+            { value: 'Japanese Katsu Sando (pork cutlet sandwich)', label: 'كاتسو ساندو ياباني' },
+            { value: 'Chinese Roujiamo (braised pork belly bun)', label: 'روجيا مو صيني' },
+            { value: 'Korean Gilgeori Toast (street toast)', label: 'توست الشارع الكوري' },
+            { value: 'Indian Vada Pav', label: 'فادا باف هندي' },
+            { value: 'Thai Roti Gluay (Banana Roti Wrap)', label: 'روتي الموز التايلاندي' },
+            { value: 'Japanese Yakisoba Pan (Noodle Sandwich)', label: 'ياكيسوبا بان (ساندويتش نودلز)' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a fresh Falafel sandwich in pita bread', label: 'ساندويتش فلافل' },
+            { value: 'a classic Chicken Shawarma wrap', label: 'شاورما دجاج' },
+            { value: 'a juicy Beef Shawarma wrap', label: 'شاورما لحم' },
+            { value: 'a grilled Halloumi cheese sandwich with mint and tomato', label: 'ساندويتش حلوم مشوي' },
+            { value: 'a savory Kofta kebab sandwich', label: 'ساندويتش كفتة' },
+            { value: 'a Labneh sandwich with olive oil and zaatar', label: 'ساندويتش لبنة وزعتر' },
+            { value: 'a delicious Arayes (pita bread stuffed with minced meat)', label: 'عرايس' },
+        ]
     }
 ];
 
@@ -207,6 +292,32 @@ export const JUICE_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'a glass of vibrant Spanish Tomato Juice (Gazpacho style)', label: 'عصير طماطم إسباني (غازباتشو)' },
             { value: 'a glass of healthy German Carrot Juice', label: 'عصير جزر ألماني' },
         ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'a glass of Taiwanese Bubble Tea with tapioca pearls', label: 'شاي الفقاعات التايواني' },
+            { value: 'a glass of Indian Mango Lassi', label: 'مانجو لاسي هندي' },
+            { value: 'a glass of fresh Sugarcane Juice with a hint of lime', label: 'عصير قصب السكر' },
+            { value: 'a glass of refreshing Lychee Juice', label: 'عصير ليتشي' },
+            { value: 'a glass of Thai Iced Tea', label: 'شاي مثلج تايلاندي' },
+            { value: 'a glass of Vietnamese Iced Coffee (Ca Phe Sua Da)', label: 'قهوة فيتنامية مثلجة' },
+            { value: 'a cup of Japanese Matcha Latte', label: 'ماتشا لاتيه ياباني' },
+            { value: 'a glass of Hong Kong Style Milk Tea', label: 'شاي بالحليب على طريقة هونغ كونغ' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a glass of Jallab with pine nuts and raisins', label: 'جلاب' },
+            { value: 'a glass of sweet Qamar al-Din (apricot juice)', label: 'قمر الدين' },
+            { value: 'a refreshing glass of Tamarind juice (Tamar Hindi)', label: 'تمر هندي' },
+            { value: 'a tall glass of fresh Lemonade with Mint (Limonana)', label: 'ليمون بالنعناع' },
+            { value: 'a glass of Karkadeh (hibiscus iced tea)', label: 'كركديه' },
+            { value: 'a cool glass of Ayran (Laban yogurt drink)', label: 'عيران (لبن)' },
+            { value: 'a warm, comforting mug of Sahlab topped with cinnamon', label: 'سحلب' },
+            { value: 'a traditional cup of Arabic coffee (Qahwa) in a finjan', label: 'قهوة عربية' },
+        ]
     }
 ];
 
@@ -233,6 +344,27 @@ export const PIE_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'a rustic French Tarte Tatin with caramelized apples', label: 'تارت تاتان فرنسية' },
             { value: 'a traditional Austrian Apfelstrudel with powdered sugar', label: 'فطيرة التفاح النمساوية (أبفل شترودل)' },
             { value: 'a slice of English Lemon Meringue Pie', label: 'فطيرة ليمون بالمرينغ إنجليزية' },
+        ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'a Chinese Egg Tart with a flaky crust', label: 'تارت البيض الصيني' },
+            { value: 'a Filipino Buko Pie (young coconut pie)', label: 'فطيرة بوكو الفلبينية' },
+            { value: 'a slice of Japanese sweet potato pie', label: 'فطيرة البطاطا الحلوة اليابانية' },
+            { value: 'a savory Indian Samosa', label: 'سمبوسة هندية' },
+            { value: 'a savory Japanese Curry Pie', label: 'فطيرة الكاري اليابانية' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a freshly baked Spinach Fatayer (savory pie)', label: 'فطاير سبانخ' },
+            { value: 'a savory meat pie (Sfiha)', label: 'صفيحة' },
+            { value: 'a savory Lahm bi Ajeen (Arab meat pie)', label: 'لحم بعجين' },
+            { value: 'a cheese-filled savory pie (Cheese Fatayer)', label: 'فطاير جبنة' },
+            { value: 'a classic Chicken Pastilla (B\'stilla)', label: 'بسطيلة دجاج' },
+            { value: 'a savory, layered Mutabbaq filled with vegetables', label: 'مطبق' },
         ]
     }
 ];
@@ -267,8 +399,37 @@ export const BAKED_GOODS_VARIETY_OPTIONS: OptionGroup<string>[] = [
             { value: 'a classic German Pretzel with salt crystals', label: 'بريتزل ألماني' },
             { value: 'a delicate French Macaron', label: 'ماكرون فرنسي' },
             { value: 'a Chocolate Éclair with cream filling', label: 'إكلير الشوكولاتة' },
+            // FIX: Completed the value string and added the missing label property.
             { value: 'a slice of German Black Forest Cake (Schwarzwälder Kirschtorte)', label: 'كعكة الغابة السوداء' },
             { value: 'a shell-shaped French Madeleine cookie', label: 'كعكة المادلين' },
+        ]
+    },
+    {
+        label: 'Asian Items',
+        options: [
+            { value: 'a Chinese Pineapple Bun (Bolo Bao)', label: 'خبز الأناناس الصيني' },
+            { value: 'a fluffy Japanese Melonpan', label: 'ميلون بان ياباني' },
+            { value: 'a sweet Korean Soboro Bread with a crumbly topping', label: 'خبز سوبورو الكوري' },
+            { value: 'a soft Filipino Pandesal roll', label: 'بانديسال فلبيني' },
+            { value: 'a single fluffy, steamed Chinese Bao Bun', label: 'خبز الباو الصيني' },
+            { value: 'an ornate Chinese Mooncake', label: 'كعكة القمر الصينية' },
+            { value: 'a warm Korean Gyeran-ppang (Egg Bread)', label: 'خبز البيض الكوري' },
+            { value: 'a Japanese Anpan (sweet red bean bun)', label: 'أنبان ياباني (خبز الفاصوليا الحمراء)' },
+            { value: 'a soft Filipino Ensaymada with cheese', label: 'إنسيمادا فلبينية' },
+        ]
+    },
+    {
+        label: 'Arab Items',
+        options: [
+            { value: 'a piece of rich, sweet Baklava with pistachios', label: 'بقلاوة' },
+            { value: 'a golden, syrupy slice of Kunafa with cheese', label: 'كنافة' },
+            { value: 'a plate of date-filled Ma\'amoul cookies', label: 'معمول' },
+            { value: 'a slice of semolina cake, Basbousa', label: 'بسبوسة' },
+            { value: 'a sesame ring bread, Ka\'ak', label: 'كعك' },
+            { value: 'a savory Zaatar Manakish', label: 'منقوشة زعتر' },
+            { value: 'a sweet, cheese-filled Qatayef pancake, folded', label: 'قطايف' },
+            { value: 'a plate of golden-brown, syrupy Luqaimat dumplings', label: 'لقيمات' },
+            { value: 'delicate Ghorayeba shortbread cookies', label: 'غريبة' },
         ]
     }
 ];
@@ -529,5 +690,31 @@ export const PRESET_OPTIONS: Preset[] = [
         pieVariety: PIE_VARIETY_OPTIONS[0].options[0].value,
         bakedGoodsVariety: 'a flaky, buttery French Croissant',
         backgroundPrompt: 'on a white ceramic plate next to a cup of coffee on a Parisian cafe table',
+    },
+    {
+        label: 'سوق طوكيو',
+        lighting: LightingType.Natural,
+        cameraAngle: CameraAngle.CloseUp,
+        subjectType: SubjectType.BakedGoods,
+        fruitVariety: 'Japanese Yuzu',
+        vegetableVariety: 'Daikon Radish',
+        sandwichVariety: 'Japanese Katsu Sando (pork cutlet sandwich)',
+        juiceVariety: 'a glass of Taiwanese Bubble Tea with tapioca pearls',
+        pieVariety: 'a Chinese Egg Tart with a flaky crust',
+        bakedGoodsVariety: 'a fluffy Japanese Melonpan',
+        backgroundPrompt: 'on a wooden tray at a bustling Tokyo street market, with a softly blurred background of lanterns and food stalls',
+    },
+    {
+        label: 'إفطار رمضان',
+        lighting: LightingType.GoldenHour,
+        cameraAngle: CameraAngle.Angle45,
+        subjectType: SubjectType.BakedGoods,
+        fruitVariety: 'a bowl of luscious Medjool Dates',
+        vegetableVariety: 'a plate of Tabbouleh salad',
+        sandwichVariety: 'a fresh Falafel sandwich in pita bread',
+        juiceVariety: 'a glass of sweet Qamar al-Din (apricot juice)',
+        pieVariety: 'a savory meat pie (Sfiha)',
+        bakedGoodsVariety: 'a golden, syrupy slice of Kunafa with cheese',
+        backgroundPrompt: 'on an elegant table setting for a Ramadan Iftar, with ornate lanterns and a warm, inviting atmosphere',
     },
 ];
